@@ -1,4 +1,4 @@
-vine.egg-info/
-vine/__pycache__/
+lsvine.egg-info/
+lsvine/__pycache__/
 build/*
 dist/*

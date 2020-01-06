@@ -10,11 +10,11 @@ def read(fname):
 # follow https://github.com/awslabs/git-remote-codecommit/blob/master/setup.py
 # and https://packaging.python.org/tutorials/packaging-projects/
 setup(
-    name='vine',
+    name='lsvine',
     version='0.1.0',
     author="Shadi Akiki, AutofitCloud",
     author_email="shadi@autofitcloud.com",
-    url='https://github.com/autofitcloud/vine',
+    url='https://github.com/autofitcloud/lsvine',
     description="List contents of directories in a vine-like format.",
 
     long_description = read('README.md'),
@@ -30,6 +30,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        vine=vine.cli:cli_core
+        lsvine=lsvine.cli:cli_core
     ''',
 )

@@ -1,4 +1,4 @@
-# vine
+# lsvine
 
 List contents of directories in a vine-like format.
 
@@ -8,21 +8,21 @@ Inspired by [tree](https://en.wikipedia.org/wiki/Tree_(command)) and [trello](ht
 ## Installation
 
 ```
-pip3 install vine
+pip3 install lsvine
 ```
 
 ## Usage
 
 ```
-# vine --version
-vine, version 0.1.0
+# lsvine --version
+lsvine, version 0.1.0
 
-# vine .
-screenshots    testdir    vine         vine.egg-info         dot
+# lsvine .
+screenshots    testdir    lsvine       lsvine.egg-info       dot
 -------------  ---------  -----------  --------------------  -------------
 ls.png         d1         __init__.py  PKG-INFO              CHANGELOG
 tree.png       d2         __pycache__  SOURCES.txt           DEVELOPER.md
-vine.png       d3         cli.py       dependency_links.txt  LICENSE
+lsvine.png     d3         cli.py       dependency_links.txt  LICENSE
                f1                      entry_points.txt      README.md
                f2                      requires.txt          mk_testdir.sh
                f3                      top_level.txt         setup.py
@@ -67,7 +67,7 @@ testdir/
 
 4 directories, 19 files
 
-# vine testdir/
+# lsvine testdir/
 d1    d2    d3    dot
 ----  ----  ----  -----
 f4    f4    d4    f1
@@ -88,7 +88,7 @@ Screenshots
 
 ![](screenshots/tree.png?raw=true)
 
-![](screenshots/vine.png?raw=true)
+![](screenshots/lsvine.png?raw=true)
 
 
 

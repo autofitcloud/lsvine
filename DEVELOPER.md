@@ -9,7 +9,7 @@ bash mk_testdir.sh
 Install editably locally
 
 ```
-pew new vine
+pew new lsvine
 pip3 install -e .
 ```
 
