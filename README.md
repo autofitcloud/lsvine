@@ -2,7 +2,7 @@
 
 List contents of directories in a vine-like format.
 
-`lsvine` is like [tree](https://en.wikipedia.org/wiki/Tree_(command)) but with the first-level directories distributed horizontally (and dangling downwards, hence like a vine).
+I built `lsvine` to be like [tree](https://en.wikipedia.org/wiki/Tree_(command)) but with the first-level directories distributed horizontally (and dangling downwards, hence like a vine).
 
 This format compacts the information vertically and displays it in a [trello](https://trello.com/)-like format.
 
