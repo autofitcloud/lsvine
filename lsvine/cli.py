@@ -47,14 +47,14 @@ def doit(mypath):
   
   # append direct files
   if df_files.shape[0] > 0:
-    lol_dirs['dot'] = df_files.fn_full.tolist()
+    lol_dirs['0_root'] = df_files.fn_full.tolist()
   
   # skip folders that begin with .
   lol_dirs = {k: v for i, (k,v) in enumerate(lol_dirs.items()) if not k.startswith('.') and not k.startswith('_')}
   lol_dirs = {k: [fn for fn in v if not fn.startswith('.')] for i, (k,v) in enumerate(lol_dirs.items())}
   
   # truncate number of folders
-  # lol_dirs = {k: v for i, (k,v) in enumerate(lol_dirs.items()) if i<10 or k=='dot'}
+  # lol_dirs = {k: v for i, (k,v) in enumerate(lol_dirs.items()) if i<10 or k=='0_root'}
   
   # sort alphabetically
   lol_dirs = {k: sorted(v) for i, (k,v) in enumerate(lol_dirs.items())}
@@ -62,8 +62,18 @@ def doit(mypath):
   # color dirs and truncate filenames
   from termcolor import colored
   max_fnl = 50
-  lol_dirs = {k: [colored(fn[:max_fnl], "grey" if isfile(join(mypath,k,fn)) else "blue", attrs=[] if isfile(join(mypath,k,fn)) else ['bold']) for fn in v] for i, (k,v) in enumerate(lol_dirs.items())}
+  lol_dirs = {k: [  colored( fn[:max_fnl],
+                             "grey" if isfile(join(mypath,'.' if k=='0_root' else k,fn)) else "blue",
+                             attrs=[] if isfile(join(mypath,'.' if k=='0_root' else k,fn)) else ['bold']
+                           )
+                    for fn in v]
+                 for i, (k,v) in enumerate(lol_dirs.items())
+             }
   #lol_dirs = {k: [print(join(mypath,k,fn), isfile(join(mypath,k,fn))) for fn in v] for i, (k,v) in enumerate(lol_dirs.items())}
+  
+  # change lol_dirs to an OrderedDict with sorted keys
+  import collections
+  lol_dirs = collections.OrderedDict(sorted(lol_dirs.items()))
   
   #
   # print(lol_dirs)
