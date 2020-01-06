@@ -92,6 +92,7 @@ def doit(mypath):
 # https://click.palletsprojects.com/en/7.x/
 @click.command()
 @click.argument("path", default='.', type=click.Path(exists=True))
+@click.version_option()
 def cli_core(path):
   doit(path)
 

@@ -11,7 +11,7 @@ def read(fname):
 # and https://packaging.python.org/tutorials/packaging-projects/
 setup(
     name='vine',
-    version='0.1',
+    version='0.1.0',
     author="Shadi Akiki, AutofitCloud",
     author_email="shadi@autofitcloud.com",
     url='https://github.com/autofitcloud/vine',

@@ -11,6 +11,24 @@ Inspired by [tree](https://en.wikipedia.org/wiki/Tree_(command)) and [trello](ht
 pip3 install vine
 ```
 
+## Usage
+
+```
+# vine --version
+vine, version 0.1.0
+
+# vine .
+screenshots    testdir    vine         vine.egg-info         dot
+-------------  ---------  -----------  --------------------  -------------
+ls.png         d1         __init__.py  PKG-INFO              CHANGELOG
+tree.png       d2         __pycache__  SOURCES.txt           DEVELOPER.md
+vine.png       d3         cli.py       dependency_links.txt  LICENSE
+               f1                      entry_points.txt      README.md
+               f2                      requires.txt          mk_testdir.sh
+               f3                      top_level.txt         setup.py
+
+```
+
 
 ## Comparison with `ls` and `tree`
 
@@ -74,23 +92,12 @@ Screenshots
 
 
 
-## Dev notes
-
-Create the `testdir` folder
-
-```
-bash mk_testdir.sh
-```
-
-Install editably locally
-
-```
-pew new vine
-pip3 install -e .
-```
-
-
 ## License
 
 Apache License 2.0. Check file [LICENSE](LICENSE)
 
+
+
+## Dev notes
+
+Check [DEVELOPER.md](DEVELOPER.md)
