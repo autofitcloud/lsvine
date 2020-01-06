@@ -20,14 +20,23 @@ pip3 install lsvine
 lsvine, version 0.1.0
 
 # lsvine .
-screenshots    testdir    lsvine       lsvine.egg-info       dot
--------------  ---------  -----------  --------------------  -------------
-ls.png         d1         __init__.py  PKG-INFO              CHANGELOG
-tree.png       d2         __pycache__  SOURCES.txt           DEVELOPER.md
-lsvine.png     d3         cli.py       dependency_links.txt  LICENSE
-               f1                      entry_points.txt      README.md
-               f2                      requires.txt          mk_testdir.sh
-               f3                      top_level.txt         setup.py
+0_root         build               dist                           lsvine       lsvine.egg-info
+-------------  ------------------  -----------------------------  -----------  --------------------
+CHANGELOG      bdist.linux-x86_64  lsvine-0.1.2-py3-none-any.whl  __init__.py  PKG-INFO
+DEVELOPER.md   lib                 lsvine-0.1.2.tar.gz            __pycache__  SOURCES.txt
+LICENSE                                                           cli.py       dependency_links.txt
+README.md                                                                      entry_points.txt
+mk_testdir.sh                                                                  requires.txt
+setup.py                                                                       top_level.txt
+
+screenshots    testdir
+-------------  ---------
+ls.png         d1
+lsvine.png     d2
+tree.png       d3
+               f1
+               f2
+               f3
 
 ```
 
@@ -46,12 +55,11 @@ testdir/
 ├── d1
 │   ├── f4
 │   ├── f5
-│   ├── f6
-│   └── f7
-├── d2
-│   ├── f4
-│   ├── f5
 │   └── f6
+├── d2
+│   ├── f7
+│   ├── f8
+│   └── f9
 ├── d3
 │   ├── d4
 │   │   └── f15
@@ -59,28 +67,23 @@ testdir/
 │   ├── f11
 │   ├── f12
 │   ├── f13
-│   ├── f14
-│   ├── f4
-│   ├── f5
-│   └── f6
+│   └── f14
 ├── f1
 ├── f2
 └── f3
 
-4 directories, 19 files
+4 directories, 15 files
+
 
 # lsvine testdir/
-d1    d2    d3    dot
-----  ----  ----  -----
-f4    f4    d4    f1
-f5    f5    f10   f2
-f6    f6    f11   f3
-f7          f12
-            f13
-            f14
-            f4
-            f5
-            f6
+0_root    d1    d2    d3
+--------  ----  ----  ----
+f1        f4    f7    d4
+f2        f5    f8    f10
+f3        f6    f9    f11
+                      f12
+                      f13
+                      f14
 
 ```
 
