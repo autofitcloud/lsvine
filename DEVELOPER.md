@@ -16,8 +16,10 @@ Why move from python to rust
 - https://developers.redhat.com/blog/2017/11/16/speed-python-using-rust/
 - https://www.reddit.com/r/linux/comments/eksf2f/lsvine_list_contents_of_directories_in_a_vinelike/fdfqna0?utm_source=share&utm_medium=web2x
 
-Create scaffolding files with rust
 
-```
-...
-```
+Following tutorial
+
+- https://www.rust-lang.org/what/cli
+- https://rust-cli.github.io/book/tutorial/setup.html
+- https://www.rust-lang.org/tools/install
+
