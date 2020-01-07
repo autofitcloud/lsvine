@@ -1,10 +1,22 @@
 ## Dev notes
 
+### Testing
+
 Create the `testdir` folder
 
 ```
 bash mk_testdir.sh
 ```
+
+Test
+
+```
+lsvine testdir/test1/ # standard use case
+lsvine testdir/test2/ # empty
+lsvine testdir/test3/ # 30 dirs with nested 30 dirs
+```
+
+### Moving from python to rust
 
 Create a git orphan branch
 
@@ -29,8 +41,34 @@ Following tutorial
 - https://www.rust-lang.org/tools/install
 
 
-Build & run
+### Build & run
 
 ```
 # seq 1 20; cargo run testdir/test3
 ```
+
+
+### Build and upload release to github
+
+```
+bash build.sh
+```
+and upload `dist/lsvine*` to github.com/autofitcloud/lsvine after creating a new release
+
+PS: Remember to update the version in build.sh
+
+
+### TODO
+
+TODO mac?
+
+TODO distribute via snap et al:
+
+Build a snap? (for ubuntu, debian, fedora, archlinux, rasperry pi, linux mint, ...)
+- https://snapcraft.io/blog/building-a-rust-snap-by-example
+- https://newspuddle.com/building-a-rust-snap-by-example/
+- "measure user growth" :)
+
+alternatives:
+- https://appimage.org/
+- https://www.reddit.com/r/rust/comments/6o57em/distributing_binaries_through_ppas/

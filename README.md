@@ -9,9 +9,14 @@ This format compacts the information vertically and displays it in a [trello](ht
 
 ## Installation
 
+Linux 64-bit
+
 ```
-... insert here for rust instead  of pip install
+wget https://github.com/autofitcloud/lsvine/releases/download/0.2.0/lsvine-v0.2.0-x86_64-unknown-linux-musl.tar.gz
+tar -xzf lsvine-v0.2.0-x86_64-unknown-linux-musl.tar.gz
+mv lsvine ~/.local/bin/
 ```
+
 
 ## Usage
 
