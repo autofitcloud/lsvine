@@ -1,3 +1,4 @@
 testdir/*
 target/*
 .*swp
+dist/*
