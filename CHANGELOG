@@ -4,6 +4,6 @@ Version 0.2.0 (2020-01-06)
 - feat: first release after porting from python to rust
 - feat: implemented maximum columns in displayed table and wrap around
 - feat: display dir names (column header)
+- feat: break down single table of all directories into several tables each of which fits on the terminal width
 - bugfix TODO: known issues
-    - need to wrap table when width is larger than terminal
     - need to insert new-line in filenames > 50
