@@ -23,3 +23,9 @@ Following tutorial
 - https://rust-cli.github.io/book/tutorial/setup.html
 - https://www.rust-lang.org/tools/install
 
+
+Build & run
+
+```
+# seq 1 20; cargo run testdir/test3
+```
