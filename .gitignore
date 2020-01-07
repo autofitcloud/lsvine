@@ -2,3 +2,4 @@ lsvine.egg-info/
 lsvine/__pycache__/
 build/*
 dist/*
+testdir/*

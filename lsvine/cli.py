@@ -9,17 +9,22 @@ Check README
 """
 from tabulate import tabulate
 import sys
+import os
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
 import click
+import numpy as np
 
 
 def doit(mypath):
   # files list
   onlyfiles = listdir(mypath) # if isfile(join(mypath, f))]
   
-  
+  # empty folder
+  if len(onlyfiles)==0:
+    return
+ 
   # dataframe
   df = pd.DataFrame({'fn_full': onlyfiles})
   
@@ -58,10 +63,22 @@ def doit(mypath):
   
   # sort alphabetically
   lol_dirs = {k: sorted(v) for i, (k,v) in enumerate(lol_dirs.items())}
-  
-  # color dirs and truncate filenames
-  from termcolor import colored
+
+  # prepare for max filename length to display
   max_fnl = 50
+
+  # calculate the maximum number of columns that can be displayed
+  lengths_cumsum = np.cumsum([
+                          np.max([min(len(fn), max_fnl) for fn in v + [k]]) + 3 # assume 3 spaces between columns. Take column name into account
+                          for i, (k, v) in enumerate(lol_dirs.items())
+                       ])
+  lengths_available = os.get_terminal_size().columns
+  rownumbers = [x//lengths_available for x in lengths_cumsum] # returns which rownumber each item in the dict should use
+ 
+  # color dirs and truncate filenames
+  # TODO instead of truncating, insert a new-line character. tabulate can display multi-line cells
+  # https://github.com/astanin/python-tabulate#multiline-cells
+  from termcolor import colored
   lol_dirs = {k: [  colored( fn[:max_fnl],
                              "grey" if isfile(join(mypath,'.' if k=='0_root' else k,fn)) else "blue",
                              attrs=[] if isfile(join(mypath,'.' if k=='0_root' else k,fn)) else ['bold']
@@ -78,12 +95,13 @@ def doit(mypath):
   #
   # print(lol_dirs)
   # print(tabulate(lol_dirs, headers = lol_dirs.keys()))
-  
+
+ 
   # instead of printing a singe tabulate call of a list of lists, break into muptiple rows in case of lots of folders
-  max_cols = 5
+  #max_cols = 5
   lol_dirs2 = {}
-  for i, (k,v) in enumerate(lol_dirs.items()):
-    j = int(i//max_cols)
+  for i, ((k,v), j) in enumerate(zip(lol_dirs.items(), rownumbers)):
+    #j = int(i//max_cols)
     if j not in lol_dirs2.keys(): lol_dirs2[j] = {}
     lol_dirs2[j][k] = v
   

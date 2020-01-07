@@ -1,17 +1,21 @@
 ## Dev notes
 
-Create the `testdir` folder
-
-```
-bash mk_testdir.sh
-```
-
 Install editably locally
 
 ```
 pew new lsvine
 pip3 install -e .
 ```
+
+Testing
+
+```
+bash mk_testdir.sh
+lsvine testdir/test1 # normal use case
+lsvine testdir/test2 # empty
+lsvine testdir/test3 # 30 dirs of 30 dirs each
+```
+
 
 Packaging to pypi
 
