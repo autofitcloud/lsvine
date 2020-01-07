@@ -236,7 +236,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "lsvine"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "colored 1.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "prettytable-rs 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
