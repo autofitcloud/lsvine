@@ -8,11 +8,14 @@ use std::{fs, io};
 
 // https://crates.io/crates/prettytable-rs
 //#[macro_use] extern crate prettytable;
-use prettytable::{Table, Cell}; // , Row
+use prettytable::{Table, Row, Cell};
 use prettytable::format;
 
 // https://eminence.github.io/terminal-size/doc/terminal_size/index.html
 use terminal_size::{Width, Height, terminal_size};
+
+// https://doc.rust-lang.org/std/cmp/fn.min.html
+use std::cmp;
 
 /// Display contents of directory in vine-like output.
 #[derive(StructOpt)]
@@ -65,6 +68,11 @@ fn main() -> io::Result<()> {
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>()?;
 
+    // if empty
+    if l1.len()==0 {
+      process::exit(4);
+    }
+
     // sort
     l1.sort();
 
@@ -72,8 +80,12 @@ fn main() -> io::Result<()> {
     let idx_root = table1.len(); // 0;
     table1.add_empty_row();
 
+    // gather dir names
+    let mut dirnames = Vec::new();
+    dirnames.push(".");
+
     // loop
-    for tip in l1 {
+    for tip in &l1 {
         // if starts with .  
         // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
         if tip.file_name().unwrap().to_str().unwrap().starts_with(".") {
@@ -91,6 +103,9 @@ fn main() -> io::Result<()> {
           // done
           continue;
         }
+
+        // push dirname
+        dirnames.push(tip.file_name().unwrap().to_str().unwrap());
 
         // insert row for directory: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
         let idx_dir = table1.len();
@@ -151,11 +166,19 @@ fn main() -> io::Result<()> {
 
     // number of tables displayed
     let mut idx_table = 0;
-    for i in 0..nrow {
+    let max_col = 5;
+    for i in 0..nrow+1 {
+      // debug
+      // println!("i {}, idx_table {}, dirnames.len {}", i, idx_table, dirnames.len());
     
       // if need to flush current table2
-      let max_col = 5;
-      if i > 0 && i % max_col == 0 {
+      if i==nrow || (i > 0 && i % max_col == 0) {
+        // set title: https://crates.io/crates/prettytable-rs
+        // slicing // let row_titles = l1[idx_table*max_col .. (idx_table+1)*max_col-1].to_vec().iter().map(|res| Cell::new(res.file_name().unwrap().to_str().unwrap())).collect();
+        let idx_end = cmp::min(nrow, (idx_table+1)*max_col-1);
+        let row_titles = dirnames[idx_table*max_col .. idx_end].to_vec().iter().map(|res| Cell::new(res)).collect();
+        table2.set_titles(Row::new(row_titles));
+
         // print table
         table2.printstd();
 
@@ -167,6 +190,9 @@ fn main() -> io::Result<()> {
         idx_table = idx_table + 1;
       }
 
+      if i==nrow {
+        break
+      }
 
       let ncol = table1[i].len();
       if ncol==0 {
@@ -190,7 +216,7 @@ fn main() -> io::Result<()> {
     }
 
     // print table
-    table2.printstd();
+//    table2.printstd();
 
     Ok(())
 }
