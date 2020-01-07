@@ -6,7 +6,7 @@ rm dist/* -rf
 rm target/* -rf
 
 # version
-LSVINE_VERSION=v0.2.0
+LSVINE_VERSION=v0.2.1
 
 # ubuntu et al
 TARGET=x86_64-unknown-linux-musl
