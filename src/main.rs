@@ -18,6 +18,9 @@ use termion::terminal_size;
 // https://doc.rust-lang.org/std/cmp/fn.min.html
 use std::cmp;
 
+// coloring dirs
+use colored::*;
+
 /// Display contents of directory in vine-like output.
 #[derive(StructOpt)]
 struct Cli {
@@ -59,7 +62,8 @@ fn main() -> io::Result<()> {
 
     // Create the table. Each row corresponds to a folder. The first row is root, the second is the first directory.
     // Note that the end-goal requires transposing this table, but it's just easier to deal with this table as such and later transpose.
-    let mut table1 = Table::new();
+    // let mut table1 = Table::new();
+    let mut table1: Vec<Vec<std::path::PathBuf>> = Vec::new();
 
     // list contents of path
     // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
@@ -79,7 +83,8 @@ fn main() -> io::Result<()> {
 
     // insert row for root: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
     let idx_root = table1.len(); // 0;
-    table1.add_empty_row();
+    //table1.add_empty_row();
+    table1.push(Vec::new());
 
     // gather dir names
     let mut dirnames = Vec::new();
@@ -99,7 +104,8 @@ fn main() -> io::Result<()> {
         // if file
         if tip.is_file() {
           // append
-          table1[idx_root].add_cell(Cell::new(tip.file_name().unwrap().to_str().unwrap()));
+          //table1[idx_root].add_cell(Cell::new(tip));
+          table1[idx_root].push(tip.to_path_buf());
 
           // done
           continue;
@@ -110,7 +116,8 @@ fn main() -> io::Result<()> {
 
         // insert row for directory: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
         let idx_dir = table1.len();
-        table1.add_empty_row();
+        //table1.add_empty_row();
+        table1.push(Vec::new());
 
         // get level 2
         let mut l2 = fs::read_dir(tip)?
@@ -129,7 +136,8 @@ fn main() -> io::Result<()> {
             }
 
             // append
-            table1[idx_dir].add_cell(Cell::new(path.file_name().unwrap().to_str().unwrap()));
+            //table1[idx_dir].add_cell(Cell::new(path));
+            table1[idx_dir].push(path);
 
             // display
             // println!("{}", path.display())
@@ -149,7 +157,7 @@ fn main() -> io::Result<()> {
       //println!("max filename length in {} = {} ...", dirnames[i], max_cur);
 
       for j in 0..table1[i].len() {
-        let max_cell = table1[i][j].get_content().chars().count();
+        let max_cell = table1[i][j].file_name().unwrap().to_str().unwrap().chars().count();
         max_cur = cmp::max(max_cur, max_cell);
         //println!("new filename {} \t\t max cur {} \t max cell {}", table1[i][j].get_content(), max_cur, max_cell);
       }
@@ -175,6 +183,16 @@ fn main() -> io::Result<()> {
     if nrow==0 {
       println!("No results");
       process::exit(2);
+    }
+
+    // color the directories in bold blue
+    let mut table_isdir: Vec<Vec<bool>> = Vec::new();
+    for i in 0..table1.len() {
+      table_isdir.push(Vec::new());
+      for j in 0..table1[i].len() {
+          table_isdir[i].push(!table1[i][j].is_file());
+          // println!("path {} isfile {}", table1[i][j].display(), table1[i][j].is_file());
+      }
     }
 
     // get terminal width .. surely there is a better way
@@ -216,7 +234,7 @@ fn main() -> io::Result<()> {
 
         // set title: https://crates.io/crates/prettytable-rs
         // slicing // let row_titles = l1[idx_table*max_col .. (idx_table+1)*max_col-1].to_vec().iter().map(|res| Cell::new(res.file_name().unwrap().to_str().unwrap())).collect();
-        let row_titles = dirnames[sum_displayed .. sum_displayed + max_col].to_vec().iter().map(|res| Cell::new(res)).collect();
+        let row_titles = dirnames[sum_displayed .. sum_displayed + max_col].to_vec().iter().map(|res| Cell::new(res.blue().bold().to_string().as_str())).collect();
         table2.set_titles(Row::new(row_titles));
 
         // print table
@@ -254,7 +272,9 @@ fn main() -> io::Result<()> {
         }
 
         //println!("Table2 {} {}", table2.len(), table2[j].len());
-        table2[j].add_cell(Cell::new(table1[i][j].get_content().as_str()));
+        let cell_val1 = table1[i][j].file_name().unwrap().to_str().unwrap();
+        let cell_val2 = if table_isdir[i][j] { cell_val1.blue().bold() } else { cell_val1.normal() };
+        table2[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
       }
     }
 
