@@ -23,27 +23,21 @@ mv lsvine ~/.local/bin/
 
 ```
 # lsvine --version
-lsvine, version 0.1.0
+lsvine 0.2.1
 
 # lsvine .
-0_root         build               dist                           lsvine       lsvine.egg-info
--------------  ------------------  -----------------------------  -----------  --------------------
-CHANGELOG      bdist.linux-x86_64  lsvine-0.1.2-py3-none-any.whl  __init__.py  PKG-INFO
-DEVELOPER.md   lib                 lsvine-0.1.2.tar.gz            __pycache__  SOURCES.txt
-LICENSE                                                           cli.py       dependency_links.txt
-README.md                                                                      entry_points.txt
-mk_testdir.sh                                                                  requires.txt
-setup.py                                                                       top_level.txt
-
-screenshots    testdir
--------------  ---------
-ls.png         d1
-lsvine.png     d2
-tree.png       d3
-               f1
-               f2
-               f3
-
++---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
+| .             | dist                                           | screenshots | src     | target                    | testdir |
++---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
+| CHANGELOG     | lsvine-v0.2.1-x86_64-unknown-linux-musl.tar.gz | ls.png      | main.rs | release                   | test1   |
+| Cargo.lock    |                                                | lsvine.png  |         | x86_64-unknown-linux-musl | test2   |
+| Cargo.toml    |                                                | tree.png    |         |                           | test3   |
+| DEVELOPER.md  |                                                |             |         |                           |         |
+| LICENSE       |                                                |             |         |                           |         |
+| README.md     |                                                |             |         |                           |         |
+| build.sh      |                                                |             |         |                           |         |
+| mk_testdir.sh |                                                |             |         |                           |         |
++---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
 ```
 
 
@@ -53,10 +47,10 @@ tree.png       d3
 - `tree` can be installed with `apt-get install tree`
 
 ```
-# ls testdir/
+# ls testdir/test1/
 d1  d2  d3  f1  f2  f3
 
-# tree testdir/
+# tree testdir/test1/
 testdir/
 ├── d1
 │   ├── f4
@@ -81,16 +75,17 @@ testdir/
 4 directories, 15 files
 
 
-# lsvine testdir/
-0_root    d1    d2    d3
---------  ----  ----  ----
-f1        f4    f7    d4
-f2        f5    f8    f10
-f3        f6    f9    f11
-                      f12
-                      f13
-                      f14
-
+# lsvine testdir/test1/
++----+----+----+-----+
+| .  | d1 | d2 | d3  |
++----+----+----+-----+
+| f1 | f4 | f7 | d4  |
+| f2 | f5 | f8 | f10 |
+| f3 | f6 | f9 | f11 |
+|    |    |    | f12 |
+|    |    |    | f13 |
+|    |    |    | f14 |
++----+----+----+-----+
 ```
 
 Screenshots
