@@ -1,12 +1,15 @@
 #!/bin/bash
 # https://github.com/rustwasm/wasm-pack/blob/51e6351c28fbd40745719e6d4a7bf26dadd30c85/.travis.yml#L74-L91
 
+# abort on error
+set -e
+
 # clear
 rm dist/* -rf
 rm target/* -rf
 
 # version
-LSVINE_VERSION=v0.2.1
+LSVINE_VERSION=v0.2.1 # also update in Cargo.toml
 
 # ubuntu et al
 TARGET=x86_64-unknown-linux-musl
