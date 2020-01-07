@@ -1,11 +1,11 @@
 
-Version 0.2.0 (2020-01-06)
+Version 0.2.{0,1} (2020-01-07)
 
 - feat: first release after porting from python to rust
 - feat: implemented maximum columns in displayed table and wrap around
 - feat: display dir names (column header)
 - feat: break down single table of all directories into several tables each of which fits on the terminal width
+- feat: color directories in blue
 - bugfix TODO: known issues
     - need to insert new-line in filenames > 50
     - no tests yet (blush) https://rust-cli.github.io/book/tutorial/testing.html
-    - color directories in blue
