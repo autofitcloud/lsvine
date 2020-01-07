@@ -11,6 +11,9 @@ use std::{fs, io};
 use prettytable::{Table, Cell}; // , Row
 use prettytable::format;
 
+// https://eminence.github.io/terminal-size/doc/terminal_size/index.html
+use terminal_size::{Width, Height, terminal_size};
+
 /// Display contents of directory in vine-like output.
 #[derive(StructOpt)]
 struct Cli {
@@ -50,7 +53,8 @@ fn main() -> io::Result<()> {
       process::exit(1);
     }
 
-    // Create the table
+    // Create the table. Each row corresponds to a folder. The first row is root, the second is the first directory.
+    // Note that the end-goal requires transposing this table, but it's just easier to deal with this table as such and later transpose.
     let mut table1 = Table::new();
 
     // list contents of path
@@ -134,9 +138,36 @@ fn main() -> io::Result<()> {
       process::exit(2);
     }
 
+    // get terminal width
+    let size = terminal_size();
+    let mut _terminal_width = 0;
+    if let Some((Width(w), Height(_h))) = size {
+        _terminal_width = w;
+    }
+
     // transpose the table
     let mut table2 = Table::new();
+    table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+
+    // number of tables displayed
+    let mut idx_table = 0;
     for i in 0..nrow {
+    
+      // if need to flush current table2
+      let max_col = 5;
+      if i > 0 && i % max_col == 0 {
+        // print table
+        table2.printstd();
+
+        // set to new table
+        table2 = Table::new();
+        table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+
+        // increment
+        idx_table = idx_table + 1;
+      }
+
+
       let ncol = table1[i].len();
       if ncol==0 {
         continue
@@ -146,8 +177,9 @@ fn main() -> io::Result<()> {
           table2.add_empty_row();
         }
 
-        if i >=  table2[j].len() {
-          for _k in table2[j].len() .. i {
+        let idx_start = idx_table*max_col + table2[j].len();
+        if i >=  idx_start {
+          for _k in idx_start .. i {
             table2[j].add_cell(Cell::new(""));
           }
         }
@@ -158,8 +190,6 @@ fn main() -> io::Result<()> {
     }
 
     // print table
-    table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-
     table2.printstd();
 
     Ok(())
