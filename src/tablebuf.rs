@@ -10,6 +10,7 @@ use colored::*;
 
 // local imports
 pub use crate::level1dir;
+pub use crate::vecpath2vecl1dir::to_str;
 
 /// Wrap a prettytable::Table into a flushable Table based on reaching terminal width
 /// TODO spinoff a new class TableColFirst about a column-first Table implementation
@@ -104,9 +105,19 @@ impl TableBuf {
         }
 
         //println!("level1_vine {} {}", self.table.len(), self.table[j].len());
-        let cell_val1 = l1dir.contents[j].file_name().unwrap().to_str().unwrap();
-        let cell_val2 = if !l1dir.contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
-        self.table[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
+        match l1dir.contents[j].file_name().and_then(to_str) {
+            Some(cell_val1) => {
+                let cell_val2 = if !l1dir.contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
+                self.table[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
+            },
+            None => {
+              println!("Error reading a path filename. Skipping it.");
+              self.table[j].add_cell(Cell::new(""));
+              continue;
+            }
+        }
+
+
       }
   }
 

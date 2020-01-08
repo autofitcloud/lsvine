@@ -10,7 +10,8 @@ use std::io;
 pub mod tablebuf;
 #[path = "../src/level1dir.rs"]
 pub mod level1dir;
-
+#[path = "../src/vecpath2vecl1dir.rs"]
+pub mod vecpath2vecl1dir;
 
 pub use tablebuf::TableBuf;
 pub use level1dir::Level1Dir;
