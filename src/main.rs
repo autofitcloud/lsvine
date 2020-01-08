@@ -126,6 +126,11 @@ fn main() -> io::Result<()> {
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, io::Error>>()?;
 
+        // if empty
+        if l2.len()==0 {
+          continue;
+        }
+
         // sort
         l2.sort();
 
