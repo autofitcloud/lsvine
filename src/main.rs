@@ -85,9 +85,9 @@ impl TableBuf {
     let mut x = TableBuf {
       table: Table::new(),
       row_titles: Vec::new(),
-      ncol_max: ncol_max,
+      ncol_max, // equivalent to ncol_max: ncol_max
       ncol_received: 0,
-      terminal_width: terminal_width,
+      terminal_width,
       idx_table: 0,
       maxlen_cum: 0,
       maxlen_last: 0,
@@ -97,11 +97,11 @@ impl TableBuf {
     // disable line separators
     x.table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
 
-    return x
+    x
   }
 
   pub fn push(&mut self, l1dir: &Level1Dir) {
-      self.ncol_received = self.ncol_received + 1;
+      self.ncol_received += 1;
 
       // save some attributes pertaining to the current directory
       self.row_titles.push(l1dir.dirname.blue().bold().to_string()); // .as_str()
@@ -146,7 +146,7 @@ impl TableBuf {
   }
 
   pub fn should_flush(&self) -> bool {
-    return self.maxlen_cum >= self.terminal_width;
+    self.maxlen_cum >= self.terminal_width
   }
 
   pub fn display(&mut self) {
@@ -174,7 +174,7 @@ impl TableBuf {
       self.table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
 
       // increment
-      self.idx_table = self.idx_table + 1;
+      self.idx_table += 1;
       self.ncol_flushed = self.ncol_received;
   }
 }
@@ -182,7 +182,7 @@ impl TableBuf {
 // --------------------------------
 
 fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1Dir>, io::Error> {
-    if level1_paths.len()==0 {
+    if level1_paths.is_empty() {
       return Ok(Vec::new());
     }
 
@@ -213,7 +213,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
         // println!("debug fn {}, is_file {}, is_dir {}", tip_fn, tip_fp.is_file(), tip_fp.is_dir());
 
         // skip filenames that start with .  
-        if tip_fn.starts_with(".") {
+        if tip_fn.starts_with('.') {
           continue;
         }
 
@@ -255,7 +255,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
             .collect::<Result<Vec<_>, io::Error>>()?;
 
         // skip the rest of this loop if empty dir
-        if level2_paths.len()==0 {
+        if level2_paths.is_empty() {
           continue;
         }
 
@@ -270,7 +270,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
             let path_fl = path_fn.chars().count();
 
             // skip files starting with .
-            if path_fn.starts_with(".") {
+            if path_fn.starts_with('.') {
               continue;
             }
 
@@ -286,7 +286,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
 
     }
 
-    return Result::Ok(level1_dirs);
+    Result::Ok(level1_dirs)
 }
 
 // --------------------------------
@@ -379,13 +379,13 @@ fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<V
     File::create(&file_path_3)?;
 
     let mut input = Vec::new();
-    input.push(file_path_1.to_path_buf());
-    input.push(file_path_2.to_path_buf());
-    input.push(dir_path_2.to_path_buf());
+    input.push(file_path_1);
+    input.push(file_path_2);
+    input.push(dir_path_2);
     // no need to insert this, the function will traverse again and find it
     // input.push(file_path_3.to_path_buf());
 
-    return Ok(input);
+    Ok(input)
 }
 
 
@@ -482,7 +482,7 @@ fn main() -> io::Result<()> {
         .collect::<Result<Vec<_>, io::Error>>()?;
 
     // exit with zero if current path is empty
-    if level1_paths.len()==0 {
+    if level1_paths.is_empty() {
       process::exit(0);
     }
 
@@ -513,20 +513,24 @@ fn main() -> io::Result<()> {
     let mut level1_vine = TableBuf::new(_terminal_width, n_l1dirs);
 
     // loop over level 1 directories, with 1 extra step in order to flush the vine if it hasn't reached terminal width yet
-    for i in 0..n_l1dirs+1 {
+    for l1dir in level1_dirs.iter() {
       // debug
       //println!("i {}, n_l1dirs {}, idx_table {}, level1_dirs.len {}", i, n_l1dirs, idx_table, level1_dirs.len());
 
       // if need to flush current level1_vine
-      if i==n_l1dirs || level1_vine.should_flush() {
+      if level1_vine.should_flush() {
         level1_vine.display();
         level1_vine.flush();
       }
 
-      // this is the extra step required to flush even if the terminal width is not reached
-      if i==n_l1dirs { break; }
+      // push to table
+      level1_vine.push(&l1dir);
+    }
 
-      level1_vine.push(&level1_dirs[i]);
+    // one final display before the end of the program
+    if !level1_vine.table.is_empty() {
+        level1_vine.display();
+        level1_vine.flush();
     }
 
     // print table
