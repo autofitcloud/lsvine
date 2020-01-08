@@ -10,6 +10,7 @@ Version 0.2.2rc (2020-01-08)
 - enh: skip empty dirs
 - enh: refactor `l1` and `l2` to `level1_paths` and `level2_paths`
 - enh: refactor `table2` to `level1_vine`
+- enh: refactor `ncol` to `n_l2paths` and `nrow` to `n_l1dirs`
 
 
 Version 0.2.{0,1} (2020-01-07)
