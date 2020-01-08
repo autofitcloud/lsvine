@@ -6,6 +6,7 @@ Version 0.2.2rc (2020-01-08)
 - TODO: add tests (blush) https://rust-cli.github.io/book/tutorial/testing.html
 - enh: drop useless variable table_isdir
 - enh: factor out a struct Level1Dir to gather data. Instead of multiple Vec to track different features of a directory, just one Vec of the struct.
+- enh: refactor `table1` to `level1_dir`
 
 
 Version 0.2.{0,1} (2020-01-07)
