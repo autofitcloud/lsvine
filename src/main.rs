@@ -159,9 +159,9 @@ fn main() -> io::Result<()> {
     }
 
     // get n rows and cols
-    let nrow = level1_dirs.len();
+    let n_l1dirs = level1_dirs.len();
 
-    if nrow==0 {
+    if n_l1dirs==0 {
       println!("No results");
       process::exit(2);
     }
@@ -181,27 +181,27 @@ fn main() -> io::Result<()> {
     // cumulative sum of width
     let mut max_cum = 0;
     let mut sum_displayed = 0;
-    for i in 0..nrow+1 {
+    for i in 0..n_l1dirs+1 {
       // debug
-      //println!("i {}, nrow {}, idx_table {}, level1_dirs.len {}", i, nrow, idx_table, level1_dirs.len());
+      //println!("i {}, n_l1dirs {}, idx_table {}, level1_dirs.len {}", i, n_l1dirs, idx_table, level1_dirs.len());
    
       // add
-      if i<nrow {
+      if i<n_l1dirs {
         max_cum = max_cum + level1_dirs[i].max_name_len + 3; // add 3 characters
         //println!("max cum {}, term wid {}", max_cum, _terminal_width);
       }
  
       // if need to flush current level1_vine
-      // if i==nrow || (i > 0 && i % max_col == 0) {
-      if i==nrow || max_cum >= _terminal_width {
+      // if i==n_l1dirs || (i > 0 && i % max_col == 0) {
+      if i==n_l1dirs || max_cum >= _terminal_width {
         // reset
-        if i<nrow {
+        if i<n_l1dirs {
           max_cum = level1_dirs[i].max_name_len;
         }
 
         // override max_col
         max_col = i - sum_displayed; // i doesnt work because after the first wrap, need to subtract the sum of columns displayed so far // level1_vine.len() is the number of rows .. we need number of columns here
-        //println!("max col {}, nrow {}", max_col, nrow);
+        //println!("max col {}, n_l1dirs {}", max_col, n_l1dirs);
 
         // set title: https://crates.io/crates/prettytable-rs
         let row_titles = level1_dirs[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
@@ -219,17 +219,17 @@ fn main() -> io::Result<()> {
         sum_displayed = sum_displayed + max_col;
       }
 
-      if i==nrow {
+      if i==n_l1dirs {
         break
       }
 
-      let ncol = level1_dirs[i].contents.len();
-      //println!("add col, {}, n files {}", level1_dirs[i].map(|res| res.dirname).collect(), ncol);
+      let n_l2paths = level1_dirs[i].contents.len();
+      //println!("add col, {}, n files {}", level1_dirs[i].map(|res| res.dirname).collect(), n_l2paths);
 
-      if ncol==0 {
+      if n_l2paths==0 {
         continue
       }
-      for j in 0..ncol {
+      for j in 0..n_l2paths {
         if j >= level1_vine.len() {
           level1_vine.add_empty_row();
         }
