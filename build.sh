@@ -9,7 +9,7 @@ rm dist/* -rf
 rm target/* -rf
 
 # version
-LSVINE_VERSION=v0.2.2rc # also update in Cargo.toml
+LSVINE_VERSION=v0.2.2 # also update in Cargo.toml
 
 # ubuntu et al
 TARGET=x86_64-unknown-linux-musl
