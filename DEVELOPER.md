@@ -18,6 +18,8 @@ lsvine testdir/test3/ # 30 dirs with nested 30 dirs
 
 ### Moving from python to rust
 
+Python code still available in git repo branch "python".
+
 Create a git orphan branch
 
 - https://gist.github.com/seanbuscay/5877413
@@ -32,6 +34,8 @@ Why move from python to rust
     - binary size
         - indeed, `du -sh target/debug/lsvine` shows 17M
         - whereas `du -sh /home/shadi/.local/share/virtualenvs/lsvine/lib/python3.6/site-packages/` shows `171M`
+- https://blog.cryptowat.ch/2019/11/25/sponsoring-rust-gui-library-iced/
+  - memory footprint
 
 
 Following tutorial
