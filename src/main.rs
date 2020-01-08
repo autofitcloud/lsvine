@@ -171,8 +171,8 @@ fn main() -> io::Result<()> {
     // println!("terminal width 1 {}", _terminal_width);
 
     // save into a displayable table
-    let mut table2 = Table::new();
-    table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+    let mut level1_vine = Table::new();
+    level1_vine.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
 
     // number of tables displayed
     let mut idx_table = 0;
@@ -191,7 +191,7 @@ fn main() -> io::Result<()> {
         //println!("max cum {}, term wid {}", max_cum, _terminal_width);
       }
  
-      // if need to flush current table2
+      // if need to flush current level1_vine
       // if i==nrow || (i > 0 && i % max_col == 0) {
       if i==nrow || max_cum >= _terminal_width {
         // reset
@@ -200,19 +200,19 @@ fn main() -> io::Result<()> {
         }
 
         // override max_col
-        max_col = i - sum_displayed; // i doesnt work because after the first wrap, need to subtract the sum of columns displayed so far // table2.len() is the number of rows .. we need number of columns here
+        max_col = i - sum_displayed; // i doesnt work because after the first wrap, need to subtract the sum of columns displayed so far // level1_vine.len() is the number of rows .. we need number of columns here
         //println!("max col {}, nrow {}", max_col, nrow);
 
         // set title: https://crates.io/crates/prettytable-rs
         let row_titles = level1_dirs[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
-        table2.set_titles(Row::new(row_titles));
+        level1_vine.set_titles(Row::new(row_titles));
 
         // print table
-        table2.printstd();
+        level1_vine.printstd();
 
         // set to new table
-        table2 = Table::new();
-        table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+        level1_vine = Table::new();
+        level1_vine.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
 
         // increment
         idx_table = idx_table + 1;
@@ -230,26 +230,26 @@ fn main() -> io::Result<()> {
         continue
       }
       for j in 0..ncol {
-        if j >= table2.len() {
-          table2.add_empty_row();
+        if j >= level1_vine.len() {
+          level1_vine.add_empty_row();
         }
 
-        let idx_start = idx_table*max_col + table2[j].len();
+        let idx_start = idx_table*max_col + level1_vine[j].len();
         if i >=  idx_start {
           for _k in idx_start .. i {
-            table2[j].add_cell(Cell::new(""));
+            level1_vine[j].add_cell(Cell::new(""));
           }
         }
 
-        //println!("Table2 {} {}", table2.len(), table2[j].len());
+        //println!("level1_vine {} {}", level1_vine.len(), level1_vine[j].len());
         let cell_val1 = level1_dirs[i].contents[j].file_name().unwrap().to_str().unwrap();
         let cell_val2 = if !level1_dirs[i].contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
-        table2[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
+        level1_vine[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
       }
     }
 
     // print table
-//    table2.printstd();
+//    level1_vine.printstd();
 
     Ok(())
 }
