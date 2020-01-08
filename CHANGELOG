@@ -1,5 +1,5 @@
 
-Version 0.2.2rc (2020-01-08)
+Version 0.2.2 (2020-01-08)
 
 - TODO implement feedback from https://www.reddit.com/r/rust/comments/eleleu/my_first_cli_in_rust_lsvine_list_contents_of/
 - WONTDO: insert new-line in filenames > 50
