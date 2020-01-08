@@ -39,19 +39,19 @@ struct Level1Dir {
 
 
 fn main() -> io::Result<()> {
-    //println!("Hello, world!");
+    // get CLI arg values
     let args = Cli::from_args();
 
-    // check
+    // exit with non-zero if current path doesn't exist
     if !args.path.exists() {
       println!("Path not found: {}", args.path.display());
       process::exit(1);
     }
 
-    // if file
+    // display and exit with 0 if current path is a file not a directory
     if args.path.is_file() {
       println!("{}", args.path.display());
-      process::exit(1);
+      process::exit(0);
     }
 
     // list contents of path
@@ -62,12 +62,12 @@ fn main() -> io::Result<()> {
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>()?;
 
-    // if empty
+    // exit with zero if current path is empty
     if level1_paths.len()==0 {
-      process::exit(4);
+      process::exit(0);
     }
 
-    // sort
+    // sort because read_dir doesn't guarantee sorted order
     level1_paths.sort();
 
     // Collect the data structure
@@ -86,9 +86,9 @@ fn main() -> io::Result<()> {
                    };
     level1_dirs.push(rootdir);
 
-    // loop
+    // loop over all paths in level 1
     for tip_fp in &level1_paths {
-        // if starts with .  
+        // skip filenames that start with .  
         // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
         let tip_fn = tip_fp.file_name().unwrap().to_str().unwrap();
         if tip_fn.starts_with(".") {
@@ -101,19 +101,18 @@ fn main() -> io::Result<()> {
         // filename length
         let tip_nl = tip_fn.chars().count();
 
-        // if file
+        // if path is to file not dir, put in the root dir
         if tip_fp.is_file() {
-          // append
+          // append to vector of paths
           level1_dirs[idx_root].contents.push(tip_fp.to_path_buf());
 
-          // update max_name_len
+          // update running maximum path name length
           level1_dirs[idx_root].max_name_len = cmp::max(level1_dirs[idx_root].max_name_len, tip_nl);
 
-          // done
           continue;
         }
 
-        // new Level1Dir
+        // create a new Level1Dir instance to store data about this level 1 directory
         // Cargo warns to remove the mutability of tip_ld. Not sure why.
         let tip_ld = Level1Dir { dirname: String::from(tip_fn), contents: Vec::new(), max_name_len: tip_nl };
 
@@ -121,20 +120,20 @@ fn main() -> io::Result<()> {
         let idx_dir = level1_dirs.len();
         level1_dirs.push(tip_ld);
 
-        // get level 2
+        // get level 2 paths inside the level 1 directory
         let mut level2_paths = fs::read_dir(tip_fp)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, io::Error>>()?;
 
-        // if empty
+        // skip the rest of this loop if empty dir
         if level2_paths.len()==0 {
           continue;
         }
 
-        // sort
+        // sort because read_dir doesn't guarantee sorted order
         level2_paths.sort();
 
-        // loop
+        // loop over all paths inside the level 1 directory
         for path_fp in level2_paths {
             // if starts with .  
             // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
