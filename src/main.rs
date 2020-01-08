@@ -31,12 +31,148 @@ struct Cli {
 }
 
 
+/// Hold data about a level 1 directory and its immediate child paths
 struct Level1Dir {
   dirname: String,
   contents: Vec<std::path::PathBuf>,
   max_name_len: usize
 }
 
+
+/// Wrap a prettytable::Table into a flushable Table based on reaching terminal width
+/// TODO spinoff a new class TableColFirst about a column-first Table implementation
+/// as opposed to the row-first Table implementation in prettytable
+/// (which makes sense similar to html table.tr.td order)
+// https://doc.rust-lang.org/1.30.0/book/second-edition/ch17-01-what-is-oo.html
+struct TableBuf {
+  // displayable table in CLI
+  table: Table,
+
+  // row titles pertaining to self.table
+  row_titles: Vec<String>,
+
+  // number of columns expected in total
+  ncol_max: usize,
+
+  // number of columns so far
+  ncol_received: usize,
+
+  // terminal width
+  terminal_width: usize,
+
+  // number of tables displayed
+  idx_table: usize,
+
+  // cumulative sum of width
+  maxlen_cum: usize,
+
+  // last directory's maximum pathname length
+  maxlen_last: usize,
+
+  // ...
+  ncol_flushed: usize
+}
+
+impl TableBuf {
+  pub fn new(terminal_width: usize, ncol_max: usize) -> TableBuf {
+    let mut x = TableBuf {
+      table: Table::new(),
+      row_titles: Vec::new(),
+      ncol_max: ncol_max,
+      ncol_received: 0,
+      terminal_width: terminal_width,
+      idx_table: 0,
+      maxlen_cum: 0,
+      maxlen_last: 0,
+      ncol_flushed: 0
+    };
+
+    // disable line separators
+    x.table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+
+    return x
+  }
+
+  pub fn push(&mut self, l1dir: &Level1Dir) {
+      self.ncol_received = self.ncol_received + 1;
+
+      // save some attributes pertaining to the current directory
+      self.row_titles.push(l1dir.dirname.blue().bold().to_string()); // .as_str()
+      self.maxlen_last = l1dir.max_name_len;
+
+      // add
+      if self.ncol_received < self.ncol_max {
+        self.maxlen_cum = self.maxlen_cum + l1dir.max_name_len + 3; // add 3 characters
+        //println!("max cum {}, term wid {}", maxlen_cum, self.terminal_width);
+      }
+
+      let n_l2paths = l1dir.contents.len();
+      //println!("add col, {}, n files {}", l1dir.contents.map(|res| res.dirname).collect(), n_l2paths);
+
+      // nothing to do if dir is empty
+      if n_l2paths==0 {
+        return;
+      }
+
+      // iterate over level 2 paths
+      for j in 0..n_l2paths {
+        if j >= self.table.len() {
+          self.table.add_empty_row();
+        }
+
+        // Insert empty cells if needed (since this is a column-first table)
+        // Note the +1 because the current contents themselves also get inserted via add_cell,
+        // so no need for another add_cell("") here
+        let ncol_buffer = self.ncol_received - self.ncol_flushed;
+        let ncol_inrow = self.table[j].len();
+        if ncol_buffer >  ncol_inrow + 1 {
+          for _k in ncol_inrow + 1 .. ncol_buffer {
+            self.table[j].add_cell(Cell::new(""));
+          }
+        }
+
+        //println!("level1_vine {} {}", self.table.len(), self.table[j].len());
+        let cell_val1 = l1dir.contents[j].file_name().unwrap().to_str().unwrap();
+        let cell_val2 = if !l1dir.contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
+        self.table[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
+      }
+  }
+
+  pub fn should_flush(&self) -> bool {
+    return self.maxlen_cum >= self.terminal_width;
+  }
+
+  pub fn display(&mut self) {
+      // assert self.row_titles.len() == self.ncol_received - self.ncol_flushed
+
+      // set title: https://crates.io/crates/prettytable-rs
+      self.table.set_titles(Row::new(self.row_titles.iter().map(|res| Cell::new(res)).collect()));
+
+      // print table
+      self.table.printstd();
+  }
+  
+  pub fn flush(&mut self) {
+      // reset
+      if self.ncol_received < self.ncol_max {
+        self.maxlen_cum = self.maxlen_last;
+      }
+
+      self.row_titles = Vec::new();
+
+      //println!("n_l1dirs {}", n_l1dirs);
+
+      // set to new table
+      self.table = Table::new();
+      self.table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+
+      // increment
+      self.idx_table = self.idx_table + 1;
+      self.ncol_flushed = self.ncol_received;
+  }
+}
+
+// -----------------------------------
 
 fn main() -> io::Result<()> {
     // get CLI arg values
@@ -160,6 +296,7 @@ fn main() -> io::Result<()> {
     // get n rows and cols
     let n_l1dirs = level1_dirs.len();
 
+    // This will never match since we always at least have the "." folder
     if n_l1dirs==0 {
       println!("No results");
       process::exit(2);
@@ -169,86 +306,30 @@ fn main() -> io::Result<()> {
     let _terminal_width = terminal_size().unwrap().0 as usize;
     // println!("terminal width 1 {}", _terminal_width);
 
-    // save into a displayable table
-    let mut level1_vine = Table::new();
-    level1_vine.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+    // ---------------------------------
 
-    // number of tables displayed
-    let mut idx_table = 0;
-    // maximum number of columns, will override later when first table is printed
-    let mut max_col = 5;
-    // cumulative sum of width
-    let mut max_cum = 0;
-    let mut sum_displayed = 0;
+    // convert datastructure into a displayable table with buffering to fill the terminal width
+    let mut level1_vine = TableBuf::new(_terminal_width, n_l1dirs);
+
+    // loop over level 1 directories, with 1 extra step in order to flush the vine if it hasn't reached terminal width yet
     for i in 0..n_l1dirs+1 {
       // debug
       //println!("i {}, n_l1dirs {}, idx_table {}, level1_dirs.len {}", i, n_l1dirs, idx_table, level1_dirs.len());
-   
-      // add
-      if i<n_l1dirs {
-        max_cum = max_cum + level1_dirs[i].max_name_len + 3; // add 3 characters
-        //println!("max cum {}, term wid {}", max_cum, _terminal_width);
-      }
- 
+
       // if need to flush current level1_vine
-      // if i==n_l1dirs || (i > 0 && i % max_col == 0) {
-      if i==n_l1dirs || max_cum >= _terminal_width {
-        // reset
-        if i<n_l1dirs {
-          max_cum = level1_dirs[i].max_name_len;
-        }
-
-        // override max_col
-        max_col = i - sum_displayed; // i doesnt work because after the first wrap, need to subtract the sum of columns displayed so far // level1_vine.len() is the number of rows .. we need number of columns here
-        //println!("max col {}, n_l1dirs {}", max_col, n_l1dirs);
-
-        // set title: https://crates.io/crates/prettytable-rs
-        let row_titles = level1_dirs[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
-        level1_vine.set_titles(Row::new(row_titles));
-
-        // print table
-        level1_vine.printstd();
-
-        // set to new table
-        level1_vine = Table::new();
-        level1_vine.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-
-        // increment
-        idx_table = idx_table + 1;
-        sum_displayed = sum_displayed + max_col;
+      if i==n_l1dirs || level1_vine.should_flush() {
+        level1_vine.display();
+        level1_vine.flush();
       }
 
-      if i==n_l1dirs {
-        break
-      }
+      // this is the extra step required to flush even if the terminal width is not reached
+      if i==n_l1dirs { break; }
 
-      let n_l2paths = level1_dirs[i].contents.len();
-      //println!("add col, {}, n files {}", level1_dirs[i].map(|res| res.dirname).collect(), n_l2paths);
-
-      if n_l2paths==0 {
-        continue
-      }
-      for j in 0..n_l2paths {
-        if j >= level1_vine.len() {
-          level1_vine.add_empty_row();
-        }
-
-        let idx_start = idx_table*max_col + level1_vine[j].len();
-        if i >=  idx_start {
-          for _k in idx_start .. i {
-            level1_vine[j].add_cell(Cell::new(""));
-          }
-        }
-
-        //println!("level1_vine {} {}", level1_vine.len(), level1_vine[j].len());
-        let cell_val1 = level1_dirs[i].contents[j].file_name().unwrap().to_str().unwrap();
-        let cell_val2 = if !level1_dirs[i].contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
-        level1_vine[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
-      }
+      level1_vine.push(&level1_dirs[i]);
     }
 
     // print table
-//    level1_vine.printstd();
+//    level1_vine.table.printstd();
 
     Ok(())
 }

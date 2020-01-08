@@ -11,6 +11,7 @@ Version 0.2.2rc (2020-01-08)
 - enh: refactor `l1` and `l2` to `level1_paths` and `level2_paths`
 - enh: refactor `table2` to `level1_vine`
 - enh: refactor `ncol` to `n_l2paths` and `nrow` to `n_l1dirs`
+- feat: improve the final conversion of the Vec<Level1Dir> into a displayable Table by factoring out a TableBuf struct and impl
 
 
 Version 0.2.{0,1} (2020-01-07)
