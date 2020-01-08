@@ -18,8 +18,10 @@ Version 0.2.2rc (2020-01-08)
 - feat: split out code into multiple files
     - based on https://doc.rust-lang.org/book/ch07-05-separating-modules-into-different-files.html
 - feat: dropped unwrap usage and handling None and errors
-- TODO ask about how to implement `vecpath2vecl1dir_asInheritedIterators.rs`
+- TODO ask about deep nesting of braces after removing unwrap (check `vecpath2vecl1dir`)
+    - also how to implement `vecpath2vecl1dir_asInheritedIterators.rs`
 - TODO suggest improvements to multi-file chapter in https://github.com/rust-lang/book/issues/1760
+
 
 Version 0.2.{0,1} (2020-01-07)
 
