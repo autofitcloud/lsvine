@@ -290,6 +290,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
 }
 
 // --------------------------------
+// tests https://rust-cli.github.io/book/tutorial/testing.html
 
 #[test]
 fn test_vecpath2vecl1dir_emptyvec() -> io::Result<()> {
