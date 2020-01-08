@@ -5,6 +5,7 @@ Version 0.2.2rc (2020-01-08)
 - WONTDO: insert new-line in filenames > 50
 - TODO: add tests (blush) https://rust-cli.github.io/book/tutorial/testing.html
 - enh: drop useless variable table_isdir
+- enh: factor out a struct Level1Dir to gather data. Instead of multiple Vec to track different features of a directory, just one Vec of the struct.
 
 
 Version 0.2.{0,1} (2020-01-07)
