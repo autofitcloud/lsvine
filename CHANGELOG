@@ -1,9 +1,10 @@
 
-Version 0.3.0rc (2020-01-08)
+Version 0.2.2rc (2020-01-08)
 
 - TODO implement feedback from https://www.reddit.com/r/rust/comments/eleleu/my_first_cli_in_rust_lsvine_list_contents_of/
 - WONTDO: insert new-line in filenames > 50
 - TODO: add tests (blush) https://rust-cli.github.io/book/tutorial/testing.html
+- enh: drop useless variable table_isdir
 
 
 Version 0.2.{0,1} (2020-01-07)

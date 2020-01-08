@@ -30,20 +30,6 @@ struct Cli {
 }
 
 
-//fn doit(path: std::path::PathBuf) -> Result<(), Box<dyn std::error::Error>> {
-//    if !path.exists() {
-//      println!("Path not found: {}", args.path.display());
-//      process::exit(1);
-//    //  panic!("Path not found: {}", args.path.display());
-//    }
-
-    //if !path.exists() {
-    //   return Err("Not found");
-    //}
-    //Ok(())
-//}
-
-
 fn main() -> io::Result<()> {
     //println!("Hello, world!");
     let args = Cli::from_args();
@@ -185,16 +171,6 @@ fn main() -> io::Result<()> {
       process::exit(2);
     }
 
-    // color the directories in bold blue
-    let mut table_isdir: Vec<Vec<bool>> = Vec::new();
-    for i in 0..table1.len() {
-      table_isdir.push(Vec::new());
-      for j in 0..table1[i].len() {
-          table_isdir[i].push(!table1[i][j].is_file());
-          // println!("path {} isfile {}", table1[i][j].display(), table1[i][j].is_file());
-      }
-    }
-
     // get terminal width .. surely there is a better way
     let _terminal_width = terminal_size().unwrap().0 as usize;
     // println!("terminal width 1 {}", _terminal_width);
@@ -273,7 +249,7 @@ fn main() -> io::Result<()> {
 
         //println!("Table2 {} {}", table2.len(), table2[j].len());
         let cell_val1 = table1[i][j].file_name().unwrap().to_str().unwrap();
-        let cell_val2 = if table_isdir[i][j] { cell_val1.blue().bold() } else { cell_val1.normal() };
+        let cell_val2 = if !table1[i][j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
         table2[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
       }
     }

@@ -1,6 +1,6 @@
 [package]
 name = "lsvine"
-version = "0.2.1"
+version = "0.2.2rc"
 authors = ["Shadi Akiki <shadi@autofitcloud.com>"]
 edition = "2018"
 
