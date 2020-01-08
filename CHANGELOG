@@ -7,6 +7,8 @@ Version 0.2.2rc (2020-01-08)
 - enh: drop useless variable table_isdir
 - enh: factor out a struct Level1Dir to gather data. Instead of multiple Vec to track different features of a directory, just one Vec of the struct.
 - enh: refactor `table1` to `level1_dir`
+- enh: skip empty dirs
+- enh: refactor `l1` and `l2` to `level1_paths` and `level2_paths`
 
 
 Version 0.2.{0,1} (2020-01-07)

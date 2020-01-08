@@ -56,19 +56,19 @@ fn main() -> io::Result<()> {
 
     // list contents of path
     // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
-    // let l1 = fs::read_dir(args.path).unwrap();
+    // let level1_paths = fs::read_dir(args.path).unwrap();
     // method 2: https://doc.rust-lang.org/std/fs/fn.read_dir.html
-    let mut l1 = fs::read_dir(args.path)?
+    let mut level1_paths = fs::read_dir(args.path)?
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>()?;
 
     // if empty
-    if l1.len()==0 {
+    if level1_paths.len()==0 {
       process::exit(4);
     }
 
     // sort
-    l1.sort();
+    level1_paths.sort();
 
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
@@ -87,7 +87,7 @@ fn main() -> io::Result<()> {
     level1_dir.push(rootdir);
 
     // loop
-    for tip_fp in &l1 {
+    for tip_fp in &level1_paths {
         // if starts with .  
         // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
         let tip_fn = tip_fp.file_name().unwrap().to_str().unwrap();
@@ -122,20 +122,20 @@ fn main() -> io::Result<()> {
         level1_dir.push(tip_ld);
 
         // get level 2
-        let mut l2 = fs::read_dir(tip_fp)?
+        let mut level2_paths = fs::read_dir(tip_fp)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, io::Error>>()?;
 
         // if empty
-        if l2.len()==0 {
+        if level2_paths.len()==0 {
           continue;
         }
 
         // sort
-        l2.sort();
+        level2_paths.sort();
 
         // loop
-        for path_fp in l2 {
+        for path_fp in level2_paths {
             // if starts with .  
             // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
             let path_fn = path_fp.file_name().unwrap().to_str().unwrap();
