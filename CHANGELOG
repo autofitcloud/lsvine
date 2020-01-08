@@ -13,6 +13,8 @@ Version 0.2.2rc (2020-01-08)
 - feat: improve the final conversion of the Vec<Level1Dir> into a displayable Table by factoring out a TableBuf struct and impl
 - feat: improve the first conversion Vec<Path> to Vec<Level1Dir> by by factoring out a `vecpath2vecl1dir` function
 - feat: added tests
+- enh: ran `cargo clippy` and integrated suggestions
+    - including iterator, no "return", increment, struct no dupe key-value name, single char for `starts_with`, redundant copy
 
 
 Version 0.2.{0,1} (2020-01-07)

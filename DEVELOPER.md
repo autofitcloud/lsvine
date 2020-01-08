@@ -51,14 +51,22 @@ Following tutorial
 # seq 1 20; cargo run testdir/test3
 ```
 
-Testing
+
+### Build and upload release to github
+
+Check tests pass
 
 ```
 cargo test
 ```
 
+Lint with [clippy](https://github.com/rust-lang/rust-clippy)
 
-### Build and upload release to github
+```
+cargo clippy
+```
+
+Build release
 
 ```
 bash build.sh
