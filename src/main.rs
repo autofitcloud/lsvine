@@ -22,6 +22,8 @@ use std::cmp;
 // coloring dirs
 use colored::*;
 
+// ---------------------------------
+
 /// Display contents of directory in vine-like output.
 #[derive(StructOpt)]
 struct Cli {
@@ -30,6 +32,7 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
+// ---------------------------------
 
 /// Hold data about a level 1 directory and its immediate child paths
 struct Level1Dir {
@@ -38,6 +41,7 @@ struct Level1Dir {
   max_name_len: usize
 }
 
+// ---------------------------------
 
 /// Wrap a prettytable::Table into a flushable Table based on reaching terminal width
 /// TODO spinoff a new class TableColFirst about a column-first Table implementation
@@ -175,6 +179,9 @@ impl TableBuf {
 // --------------------------------
 
 fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1Dir>, io::Error> {
+    if level1_paths.len()==0 {
+      return Ok(Vec::new());
+    }
 
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
@@ -266,6 +273,21 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
     return Result::Ok(level1_dirs);
 }
 
+#[test]
+fn test_vecpath2vecl1dir() -> io::Result<()> {
+    // empty
+    let input = Vec::new();
+    let actual = vecpath2vecl1dir(input)?;
+    assert_eq!(actual.len(), 0);
+
+    // single file
+//    let mut input = Vec::new();
+//    input.push(PathBuf("foo"));
+//    let actual = vecpath2vecl1dir(input)?;
+//    assert_eq!(actual.len(), 0);
+
+    Ok(())
+}
 
 // -----------------------------------
 

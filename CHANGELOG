@@ -13,6 +13,7 @@ Version 0.2.2rc (2020-01-08)
 - enh: refactor `ncol` to `n_l2paths` and `nrow` to `n_l1dirs`
 - feat: improve the final conversion of the Vec<Level1Dir> into a displayable Table by factoring out a TableBuf struct and impl
 - feat: improve the first conversion Vec<Path> to Vec<Level1Dir> by by factoring out a `vecpath2vecl1dir` function
+- enh: added first test
 
 
 Version 0.2.{0,1} (2020-01-07)
