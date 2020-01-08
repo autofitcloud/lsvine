@@ -7,6 +7,7 @@ use std::process;
 use std::{fs, io};
 
 // https://crates.io/crates/prettytable-rs
+// http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
 //#[macro_use] extern crate prettytable;
 use prettytable::{Table, Row, Cell};
 use prettytable::format;
@@ -30,6 +31,13 @@ struct Cli {
 }
 
 
+struct Level1Dir {
+  dirname: String,
+  contents: Vec<std::path::PathBuf>,
+  max_name_len: usize
+}
+
+
 fn main() -> io::Result<()> {
     //println!("Hello, world!");
     let args = Cli::from_args();
@@ -45,11 +53,6 @@ fn main() -> io::Result<()> {
       println!("{}", args.path.display());
       process::exit(1);
     }
-
-    // Create the table. Each row corresponds to a folder. The first row is root, the second is the first directory.
-    // Note that the end-goal requires transposing this table, but it's just easier to deal with this table as such and later transpose.
-    // let mut table1 = Table::new();
-    let mut table1: Vec<Vec<std::path::PathBuf>> = Vec::new();
 
     // list contents of path
     // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
@@ -67,46 +70,59 @@ fn main() -> io::Result<()> {
     // sort
     l1.sort();
 
-    // insert row for root: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
-    let idx_root = table1.len(); // 0;
-    //table1.add_empty_row();
-    table1.push(Vec::new());
+    // Collect the data structure
+    // Each entry corresponds to a folder in the current directory (here-on called "root").
+    // The first entry is for files in root, the second is the first child directory, etc.
+    let mut table1: Vec<Level1Dir> = Vec::new();
 
-    // gather dir names
-    let mut dirnames = Vec::new();
-    dirnames.push(".");
+    // Start by inserting entry for root
+    // https://doc.rust-lang.org/book/ch05-01-defining-structs.html
+    // Cargo warns to remove the mutability of rootdir. Not sure why.
+    let idx_root = 0; // table1.len();
+    let rootdir = Level1Dir {
+                       dirname: String::from("."),
+                       contents: Vec::new(),
+                       max_name_len: 1 // length of "."
+                   };
+    table1.push(rootdir);
 
     // loop
-    for tip in &l1 {
+    for tip_fp in &l1 {
         // if starts with .  
         // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
-        if tip.file_name().unwrap().to_str().unwrap().starts_with(".") {
+        let tip_fn = tip_fp.file_name().unwrap().to_str().unwrap();
+        if tip_fn.starts_with(".") {
           continue;
         }
 
         // display
-        // println!("{}", tip.display());
+        // println!("{}", tip_fp.display());
+
+        // filename length
+        let tip_nl = tip_fn.chars().count();
 
         // if file
-        if tip.is_file() {
+        if tip_fp.is_file() {
           // append
-          //table1[idx_root].add_cell(Cell::new(tip));
-          table1[idx_root].push(tip.to_path_buf());
+          table1[idx_root].contents.push(tip_fp.to_path_buf());
+
+          // update max_name_len
+          table1[idx_root].max_name_len = cmp::max(table1[idx_root].max_name_len, tip_nl);
 
           // done
           continue;
         }
 
-        // push dirname
-        dirnames.push(tip.file_name().unwrap().to_str().unwrap());
+        // new Level1Dir
+        // Cargo warns to remove the mutability of tip_ld. Not sure why.
+        let tip_ld = Level1Dir { dirname: String::from(tip_fn), contents: Vec::new(), max_name_len: tip_nl };
 
         // insert row for directory: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
         let idx_dir = table1.len();
-        //table1.add_empty_row();
-        table1.push(Vec::new());
+        table1.push(tip_ld);
 
         // get level 2
-        let mut l2 = fs::read_dir(tip)?
+        let mut l2 = fs::read_dir(tip_fp)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, io::Error>>()?;
 
@@ -114,57 +130,31 @@ fn main() -> io::Result<()> {
         l2.sort();
 
         // loop
-        for path in l2 {
+        for path_fp in l2 {
             // if starts with .  
             // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
-            if path.file_name().unwrap().to_str().unwrap().starts_with(".") {
+            let path_fn = path_fp.file_name().unwrap().to_str().unwrap();
+            let path_fl = path_fn.chars().count();
+
+            // skip files starting with .
+            if path_fn.starts_with(".") {
               continue;
             }
 
             // append
-            //table1[idx_dir].add_cell(Cell::new(path));
-            table1[idx_dir].push(path);
+            table1[idx_dir].contents.push(path_fp);
+
+            // update max filename length
+            table1[idx_dir].max_name_len = cmp::max(table1[idx_dir].max_name_len, path_fl);
 
             // display
-            // println!("{}", path.display())
+            // println!("{}", path_fp.display())
         }
 
     }
 
-    // get maximum file length per row in table1, in cumulative sum .. no longer in cum sum
-    // TODO Isn't this stuff that used to come from pandas/numpy in python?
-    // Need to factor out into a library or find something like
-    // (example) https://docs.rs/ndarray/0.13.0/ndarray/index.html
-    // (old)     https://www.reddit.com/r/rust/comments/5ks00y/introducing_utah_a_rust_dataframe/
-    // (new)     https://www.reddit.com/r/rust/comments/apo66e/dataframes_what_do_you_need/
-    let mut max_all: Vec<usize> = Vec::new();
-    for i in 0..table1.len() {
-      let mut max_cur = dirnames[i].chars().count(); // initialize to column header
-      //println!("max filename length in {} = {} ...", dirnames[i], max_cur);
-
-      for j in 0..table1[i].len() {
-        let max_cell = table1[i][j].file_name().unwrap().to_str().unwrap().chars().count();
-        max_cur = cmp::max(max_cur, max_cell);
-        //println!("new filename {} \t\t max cur {} \t max cell {}", table1[i][j].get_content(), max_cur, max_cell);
-      }
-      // let max_pre = if max_all.len()==0 { 0 } else { max_all[max_all.len()-1] };
-      //println!("max pre {}, max cur {}", max_pre, max_cur);
-      // max_all.push(max_pre + max_cur + 3); // always add 3 characters
-      max_all.push(max_cur);
-    }
-    //println!("{:?}", max_all);
-
-    // print table
-    // table1.printstd();
-
     // get n rows and cols
     let nrow = table1.len();
-//    let mut ncol = 0;
-//    for i in 0..nrow {
-//      if table1[i].len() > ncol {
-//        ncol = table1[i].len()
-//      }
-//    }
 
     if nrow==0 {
       println!("No results");
@@ -175,7 +165,7 @@ fn main() -> io::Result<()> {
     let _terminal_width = terminal_size().unwrap().0 as usize;
     // println!("terminal width 1 {}", _terminal_width);
 
-    // transpose the table
+    // save into a displayable table
     let mut table2 = Table::new();
     table2.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
 
@@ -188,11 +178,11 @@ fn main() -> io::Result<()> {
     let mut sum_displayed = 0;
     for i in 0..nrow+1 {
       // debug
-      //println!("i {}, nrow {}, idx_table {}, dirnames.len {}", i, nrow, idx_table, dirnames.len());
+      //println!("i {}, nrow {}, idx_table {}, table1.len {}", i, nrow, idx_table, table1.len());
    
       // add
       if i<nrow {
-        max_cum = max_cum + max_all[i] + 3; // add 3 characters
+        max_cum = max_cum + table1[i].max_name_len + 3; // add 3 characters
         //println!("max cum {}, term wid {}", max_cum, _terminal_width);
       }
  
@@ -201,7 +191,7 @@ fn main() -> io::Result<()> {
       if i==nrow || max_cum >= _terminal_width {
         // reset
         if i<nrow {
-          max_cum = max_all[i];
+          max_cum = table1[i].max_name_len;
         }
 
         // override max_col
@@ -209,8 +199,7 @@ fn main() -> io::Result<()> {
         //println!("max col {}, nrow {}", max_col, nrow);
 
         // set title: https://crates.io/crates/prettytable-rs
-        // slicing // let row_titles = l1[idx_table*max_col .. (idx_table+1)*max_col-1].to_vec().iter().map(|res| Cell::new(res.file_name().unwrap().to_str().unwrap())).collect();
-        let row_titles = dirnames[sum_displayed .. sum_displayed + max_col].to_vec().iter().map(|res| Cell::new(res.blue().bold().to_string().as_str())).collect();
+        let row_titles = table1[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
         table2.set_titles(Row::new(row_titles));
 
         // print table
@@ -229,8 +218,8 @@ fn main() -> io::Result<()> {
         break
       }
 
-      let ncol = table1[i].len();
-      //println!("add col, {}, n files {}", dirnames[i], ncol);
+      let ncol = table1[i].contents.len();
+      //println!("add col, {}, n files {}", table1[i].map(|res| res.dirname).collect(), ncol);
 
       if ncol==0 {
         continue
@@ -248,8 +237,8 @@ fn main() -> io::Result<()> {
         }
 
         //println!("Table2 {} {}", table2.len(), table2[j].len());
-        let cell_val1 = table1[i][j].file_name().unwrap().to_str().unwrap();
-        let cell_val2 = if !table1[i][j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
+        let cell_val1 = table1[i].contents[j].file_name().unwrap().to_str().unwrap();
+        let cell_val2 = if !table1[i].contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
         table2[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
       }
     }
