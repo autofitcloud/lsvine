@@ -6,8 +6,7 @@ use std::process;
 ///use exitfailure::ExitFailure;
 use std::{fs, io};
 
-// https://eminence.github.io/terminal-size/doc/terminal_size/index.html
-// use terminal_size::{Width, Height, terminal_size};
+// https://docs.rs/termion/1.5.4/termion/fn.terminal_size.html
 use termion::terminal_size;
 
 // imports
@@ -77,8 +76,16 @@ fn main() -> io::Result<()> {
     }
 
     // get terminal width .. surely there is a better way
-    let _terminal_width = terminal_size().unwrap().0 as usize;
-    // println!("terminal width 1 {}", _terminal_width);
+    let mut _terminal_width = 100; // default
+    match terminal_size() {
+      Ok(size) => {
+        _terminal_width = size.0 as usize;
+      },
+      Err(_e) => {
+        // do nothing as didn't find terminal width
+        println!("Warning: couldn't determine terminal width. Assuming {}", _terminal_width);
+      }
+    }
 
     // ---------------------------------
 
