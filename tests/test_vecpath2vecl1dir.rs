@@ -15,8 +15,6 @@ pub mod level1dir;
 #[path = "../src/vecpath2vecl1dir.rs"]
 pub mod vecpath2vecl1dir;
 
-pub use tablebuf::TableBuf;
-pub use level1dir::Level1Dir;
 pub use vecpath2vecl1dir::vecpath2vecl1dir;
 
 
@@ -94,7 +92,7 @@ fn test_vecpath2vecl1dir_twofiles_onedirempty() -> io::Result<()> {
 
 
 // utility function for tests
-fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
+pub fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
     // a dir with 2 files
 
     let file_path_1 = dir_1.path().join("my-temporary-note.txt");
@@ -124,60 +122,6 @@ fn test_vecpath2vecl1dir_twofiles_onedironefile() -> io::Result<()> {
     let actual = vecpath2vecl1dir(input)?;
     assert_eq!(actual.len(), 2);
     assert_eq!(actual[0].contents.len(), 2);
-
-    Ok(())
-}
-
-
-#[test]
-fn test_tablebuf() -> io::Result<()> {
-    let _terminal_width = 100;
-    let n_l1dirs = 5;
-    let mut level1_vine = TableBuf::new(_terminal_width, n_l1dirs);
-
-    // on start, no need to flush
-    assert_eq!(level1_vine.table.len(), 0);
-    assert_eq!(level1_vine.should_flush(), false);
-
-    // display doesn't do anything
-    level1_vine.display();
-    level1_vine.flush();
-    assert_eq!(level1_vine.table.len(), 0);
-
-    // create a Level1Dir object for testing push/display/flush/should_flush
-    let dir_1 = tempfile::tempdir()?;
-    let l1dir_1 = Level1Dir {
-      dirname: String::from("whatever"),
-      contents: _create_vecpath_twofiles_onedironefile(&dir_1)?,
-      max_name_len: 20
-    };
-    level1_vine.push(&l1dir_1);
-
-    // should now have 2 columns and 2 rows
-    assert_eq!(level1_vine.table.len(), 3);
-    assert_eq!(level1_vine.table[0].len(), 1);
-    assert_eq!(level1_vine.table[1].len(), 1);
-    assert_eq!(level1_vine.table[2].len(), 1);
-
-    // still, no need to flush
-    assert_eq!(level1_vine.should_flush(), false);
-
-    // display/flush does stuff, but we don't care ATM as long as there are no errors
-    level1_vine.display();
-    level1_vine.flush();
-    assert_eq!(level1_vine.table.len(), 0);
-
-    // another l1dir with a longer name
-    let dir_2 = tempfile::tempdir()?;
-    let l1dir_2 = Level1Dir {
-      dirname: String::from("whatever"),
-      contents: _create_vecpath_twofiles_onedironefile(&dir_2)?,
-      max_name_len: 200
-    };
-    level1_vine.push(&l1dir_2);
-
-    // max_name_len > terminal_width => should_flush = true
-    assert_eq!(level1_vine.should_flush(), true);
 
     Ok(())
 }
