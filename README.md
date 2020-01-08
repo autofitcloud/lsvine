@@ -46,6 +46,12 @@ lsvine 0.2.1
 - `ls` is available by default on all linux distributions.
 - `tree` can be installed with `apt-get install tree`
 
+Screenshots
+
+![](screenshots/sideBySide.png?raw=true)
+
+Textshots
+
 ```
 # ls testdir/test1/
 d1  d2  d3  f1  f2  f3
@@ -87,15 +93,6 @@ testdir/
 |    |    |    | f14 |
 +----+----+----+-----+
 ```
-
-Screenshots
-
-![](screenshots/ls.png?raw=true)
-
-![](screenshots/tree.png?raw=true)
-
-![](screenshots/lsvine.png?raw=true)
-
 
 
 ## License
