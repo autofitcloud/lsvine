@@ -3,6 +3,8 @@ name = "lsvine"
 version = "0.2.2"
 authors = ["Shadi Akiki <shadi@autofitcloud.com>"]
 edition = "2018"
+description = "List contents of directories in a vine-like format."
+license = "Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
