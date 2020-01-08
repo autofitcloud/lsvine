@@ -202,7 +202,7 @@ fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1D
                    };
     level1_dirs.push(rootdir);
 
-    println!("l1dirs {:?}", level1_dirs[0].contents);
+    // println!("l1dirs {:?}", level1_dirs[0].contents);
 
     // loop over all paths in level 1
     for tip_fp in &level1_paths {
@@ -365,7 +365,7 @@ fn test_vecpath2vecl1dir_twofiles_onedirempty() -> io::Result<()> {
 
 
 // utility function for tests
-fn create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
+fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
     // a dir with 2 files
 
     let file_path_1 = dir_1.path().join("my-temporary-note.txt");
@@ -391,7 +391,7 @@ fn create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Ve
 #[test]
 fn test_vecpath2vecl1dir_twofiles_onedironefile() -> io::Result<()> {
     let dir_1 = tempfile::tempdir()?;
-    let input = create_vecpath_twofiles_onedironefile(&dir_1)?;
+    let input = _create_vecpath_twofiles_onedironefile(&dir_1)?;
     let actual = vecpath2vecl1dir(input)?;
     assert_eq!(actual.len(), 2);
     assert_eq!(actual[0].contents.len(), 2);
@@ -419,7 +419,7 @@ fn test_tablebuf() -> io::Result<()> {
     let dir_1 = tempfile::tempdir()?;
     let l1dir_1 = Level1Dir {
       dirname: String::from("whatever"),
-      contents: create_vecpath_twofiles_onedironefile(&dir_1)?,
+      contents: _create_vecpath_twofiles_onedironefile(&dir_1)?,
       max_name_len: 20
     };
     level1_vine.push(&l1dir_1);
@@ -442,7 +442,7 @@ fn test_tablebuf() -> io::Result<()> {
     let dir_2 = tempfile::tempdir()?;
     let l1dir_2 = Level1Dir {
       dirname: String::from("whatever"),
-      contents: create_vecpath_twofiles_onedironefile(&dir_2)?,
+      contents: _create_vecpath_twofiles_onedironefile(&dir_2)?,
       max_name_len: 200
     };
     level1_vine.push(&l1dir_2);
