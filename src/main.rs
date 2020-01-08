@@ -73,18 +73,18 @@ fn main() -> io::Result<()> {
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
     // The first entry is for files in root, the second is the first child directory, etc.
-    let mut level1_dir: Vec<Level1Dir> = Vec::new();
+    let mut level1_dirs: Vec<Level1Dir> = Vec::new();
 
     // Start by inserting entry for root
     // https://doc.rust-lang.org/book/ch05-01-defining-structs.html
     // Cargo warns to remove the mutability of rootdir. Not sure why.
-    let idx_root = 0; // level1_dir.len();
+    let idx_root = 0; // level1_dirs.len();
     let rootdir = Level1Dir {
                        dirname: String::from("."),
                        contents: Vec::new(),
                        max_name_len: 1 // length of "."
                    };
-    level1_dir.push(rootdir);
+    level1_dirs.push(rootdir);
 
     // loop
     for tip_fp in &level1_paths {
@@ -104,10 +104,10 @@ fn main() -> io::Result<()> {
         // if file
         if tip_fp.is_file() {
           // append
-          level1_dir[idx_root].contents.push(tip_fp.to_path_buf());
+          level1_dirs[idx_root].contents.push(tip_fp.to_path_buf());
 
           // update max_name_len
-          level1_dir[idx_root].max_name_len = cmp::max(level1_dir[idx_root].max_name_len, tip_nl);
+          level1_dirs[idx_root].max_name_len = cmp::max(level1_dirs[idx_root].max_name_len, tip_nl);
 
           // done
           continue;
@@ -118,8 +118,8 @@ fn main() -> io::Result<()> {
         let tip_ld = Level1Dir { dirname: String::from(tip_fn), contents: Vec::new(), max_name_len: tip_nl };
 
         // insert row for directory: http://phsym.github.io/prettytable-rs/master/prettytable/struct.Table.html
-        let idx_dir = level1_dir.len();
-        level1_dir.push(tip_ld);
+        let idx_dir = level1_dirs.len();
+        level1_dirs.push(tip_ld);
 
         // get level 2
         let mut level2_paths = fs::read_dir(tip_fp)?
@@ -147,10 +147,10 @@ fn main() -> io::Result<()> {
             }
 
             // append
-            level1_dir[idx_dir].contents.push(path_fp);
+            level1_dirs[idx_dir].contents.push(path_fp);
 
             // update max filename length
-            level1_dir[idx_dir].max_name_len = cmp::max(level1_dir[idx_dir].max_name_len, path_fl);
+            level1_dirs[idx_dir].max_name_len = cmp::max(level1_dirs[idx_dir].max_name_len, path_fl);
 
             // display
             // println!("{}", path_fp.display())
@@ -159,7 +159,7 @@ fn main() -> io::Result<()> {
     }
 
     // get n rows and cols
-    let nrow = level1_dir.len();
+    let nrow = level1_dirs.len();
 
     if nrow==0 {
       println!("No results");
@@ -183,11 +183,11 @@ fn main() -> io::Result<()> {
     let mut sum_displayed = 0;
     for i in 0..nrow+1 {
       // debug
-      //println!("i {}, nrow {}, idx_table {}, level1_dir.len {}", i, nrow, idx_table, level1_dir.len());
+      //println!("i {}, nrow {}, idx_table {}, level1_dirs.len {}", i, nrow, idx_table, level1_dirs.len());
    
       // add
       if i<nrow {
-        max_cum = max_cum + level1_dir[i].max_name_len + 3; // add 3 characters
+        max_cum = max_cum + level1_dirs[i].max_name_len + 3; // add 3 characters
         //println!("max cum {}, term wid {}", max_cum, _terminal_width);
       }
  
@@ -196,7 +196,7 @@ fn main() -> io::Result<()> {
       if i==nrow || max_cum >= _terminal_width {
         // reset
         if i<nrow {
-          max_cum = level1_dir[i].max_name_len;
+          max_cum = level1_dirs[i].max_name_len;
         }
 
         // override max_col
@@ -204,7 +204,7 @@ fn main() -> io::Result<()> {
         //println!("max col {}, nrow {}", max_col, nrow);
 
         // set title: https://crates.io/crates/prettytable-rs
-        let row_titles = level1_dir[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
+        let row_titles = level1_dirs[sum_displayed .. sum_displayed + max_col].iter().map(|res| Cell::new(res.dirname.blue().bold().to_string().as_str())).collect();
         table2.set_titles(Row::new(row_titles));
 
         // print table
@@ -223,8 +223,8 @@ fn main() -> io::Result<()> {
         break
       }
 
-      let ncol = level1_dir[i].contents.len();
-      //println!("add col, {}, n files {}", level1_dir[i].map(|res| res.dirname).collect(), ncol);
+      let ncol = level1_dirs[i].contents.len();
+      //println!("add col, {}, n files {}", level1_dirs[i].map(|res| res.dirname).collect(), ncol);
 
       if ncol==0 {
         continue
@@ -242,8 +242,8 @@ fn main() -> io::Result<()> {
         }
 
         //println!("Table2 {} {}", table2.len(), table2[j].len());
-        let cell_val1 = level1_dir[i].contents[j].file_name().unwrap().to_str().unwrap();
-        let cell_val2 = if !level1_dir[i].contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
+        let cell_val1 = level1_dirs[i].contents[j].file_name().unwrap().to_str().unwrap();
+        let cell_val2 = if !level1_dirs[i].contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
         table2[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
       }
     }
