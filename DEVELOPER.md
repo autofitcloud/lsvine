@@ -51,6 +51,12 @@ Following tutorial
 # seq 1 20; cargo run testdir/test3
 ```
 
+Testing
+
+```
+cargo test
+```
+
 
 ### Build and upload release to github
 
