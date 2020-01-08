@@ -14,3 +14,4 @@ prettytable-rs = "^0.8"
 # terminal_size = "0.1.9" # failed to get terminal width
 termion = "*"
 colored = "1.9"
+tempfile = "3"
