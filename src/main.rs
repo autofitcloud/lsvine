@@ -172,39 +172,9 @@ impl TableBuf {
   }
 }
 
-// -----------------------------------
+// --------------------------------
 
-fn main() -> io::Result<()> {
-    // get CLI arg values
-    let args = Cli::from_args();
-
-    // exit with non-zero if current path doesn't exist
-    if !args.path.exists() {
-      println!("Path not found: {}", args.path.display());
-      process::exit(1);
-    }
-
-    // display and exit with 0 if current path is a file not a directory
-    if args.path.is_file() {
-      println!("{}", args.path.display());
-      process::exit(0);
-    }
-
-    // list contents of path
-    // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
-    // let level1_paths = fs::read_dir(args.path).unwrap();
-    // method 2: https://doc.rust-lang.org/std/fs/fn.read_dir.html
-    let mut level1_paths = fs::read_dir(args.path)?
-        .map(|res| res.map(|e| e.path()))
-        .collect::<Result<Vec<_>, io::Error>>()?;
-
-    // exit with zero if current path is empty
-    if level1_paths.len()==0 {
-      process::exit(0);
-    }
-
-    // sort because read_dir doesn't guarantee sorted order
-    level1_paths.sort();
+fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Level1Dir>, io::Error> {
 
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
@@ -292,6 +262,49 @@ fn main() -> io::Result<()> {
         }
 
     }
+
+    return Result::Ok(level1_dirs);
+}
+
+
+// -----------------------------------
+
+fn main() -> io::Result<()> {
+    // get CLI arg values
+    let args = Cli::from_args();
+
+    // exit with non-zero if current path doesn't exist
+    if !args.path.exists() {
+      println!("Path not found: {}", args.path.display());
+      process::exit(1);
+    }
+
+    // display and exit with 0 if current path is a file not a directory
+    if args.path.is_file() {
+      println!("{}", args.path.display());
+      process::exit(0);
+    }
+
+    // list contents of path
+    // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
+    // let level1_paths = fs::read_dir(args.path).unwrap();
+    // method 2: https://doc.rust-lang.org/std/fs/fn.read_dir.html
+    let mut level1_paths = fs::read_dir(args.path)?
+        .map(|res| res.map(|e| e.path()))
+        .collect::<Result<Vec<_>, io::Error>>()?;
+
+    // exit with zero if current path is empty
+    if level1_paths.len()==0 {
+      process::exit(0);
+    }
+
+    // sort because read_dir doesn't guarantee sorted order
+    level1_paths.sort();
+
+    // Collect the data structure
+    // Each entry corresponds to a folder in the current directory (here-on called "root").
+    // The first entry is for files in root, the second is the first child directory, etc.
+    let level1_dirs = vecpath2vecl1dir(level1_paths)?;
 
     // get n rows and cols
     let n_l1dirs = level1_dirs.len();
