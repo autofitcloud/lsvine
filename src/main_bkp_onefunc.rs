@@ -4,9 +4,7 @@ use structopt::StructOpt;
 use std::process;
 ///use failure::ResultExt;
 ///use exitfailure::ExitFailure;
-// use std::{fs, io};
-use std::io;
-
+use std::{fs, io};
 
 // https://docs.rs/termion/1.5.4/termion/fn.terminal_size.html
 use termion::terminal_size;
@@ -15,11 +13,9 @@ use termion::terminal_size;
 pub mod tablebuf;
 use tablebuf::TableBuf;
 pub mod level1dir;
-use level1dir::Level1Dir;
 
-pub mod vecpath2vecl1dir_iterators;
-//use vecpath2vecl1dir_iterators::{PathBufWrap, RDAdapter2};
-use vecpath2vecl1dir_iterators::RDAdapter2;
+pub mod vecpath2vecl1dir_onefunc;
+use vecpath2vecl1dir_onefunc::vecpath2vecl1dir;
 
 // ---------------------------------
 
@@ -50,17 +46,30 @@ fn main() -> io::Result<()> {
       process::exit(0);
     }
 
+    // list contents of path
+    // method 1: http://stackoverflow.com/questions/26076005/ddg#26084812
+    // let level1_paths = fs::read_dir(args.path_buf).unwrap();
+    // method 2: https://doc.rust-lang.org/std/fs/fn.read_dir.html
+    // TODO use partition instead of collect
+    // https://www.reddit.com/r/rust/comments/eleleu/my_first_cli_in_rust_lsvine_list_contents_of/fditvjp
+    // https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partition
+    // Note: due to the need to sort, cannot avoid converting the iterator into a collection
+    let mut level1_paths = fs::read_dir(args.path_buf)?
+        .map(|res| res.map(|e| e.path()))
+        .collect::<Result<Vec<_>, io::Error>>()?;
+
+    // exit with zero if current path is empty
+    if level1_paths.is_empty() {
+      process::exit(0);
+    }
+
+    // sort because read_dir doesn't guarantee sorted order
+    level1_paths.sort();
+
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
     // The first entry is for files in root, the second is the first child directory, etc.
-    let rda2_iter = RDAdapter2::new(args.path_buf.as_path());
-    //let level1_dirs = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
-    let level1_dirs = rda2_iter.collect::<Vec<Level1Dir>>();
-
-    // exit with zero if current path is empty
-    if level1_dirs.is_empty() {
-      process::exit(0);
-    }
+    let level1_dirs = vecpath2vecl1dir(level1_paths)?;
 
     // get n rows and cols
     let n_l1dirs = level1_dirs.len();

@@ -12,10 +12,10 @@ use std::fs::{File, create_dir};
 pub mod tablebuf;
 #[path = "../src/level1dir.rs"]
 pub mod level1dir;
-#[path = "../src/vecpath2vecl1dir.rs"]
-pub mod vecpath2vecl1dir;
+#[path = "../src/vecpath2vecl1dir_onefunc.rs"]
+pub mod vecpath2vecl1dir_onefunc;
 
-pub use vecpath2vecl1dir::vecpath2vecl1dir;
+pub use vecpath2vecl1dir_onefunc::{vecpath2vecl1dir, _create_vecpath_twofiles_onedironefile};
 
 
 #[test]
@@ -91,28 +91,6 @@ fn test_vecpath2vecl1dir_twofiles_onedirempty() -> io::Result<()> {
 }
 
 
-// utility function for tests
-pub fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
-    // a dir with 2 files
-
-    let file_path_1 = dir_1.path().join("my-temporary-note.txt");
-    File::create(&file_path_1)?;
-    let file_path_2 = dir_1.path().join("another-note.txt");
-    File::create(&file_path_2)?;
-    let dir_path_2 = dir_1.path().join("subdir");
-    create_dir(&dir_path_2)?;
-    let file_path_3 = dir_path_2.join("some-pic.txt");
-    File::create(&file_path_3)?;
-
-    let mut input = Vec::new();
-    input.push(file_path_1);
-    input.push(file_path_2);
-    input.push(dir_path_2);
-    // no need to insert this, the function will traverse again and find it
-    // input.push(file_path_3.to_path_buf());
-
-    Ok(input)
-}
 
 
 #[test]
