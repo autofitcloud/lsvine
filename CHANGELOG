@@ -1,3 +1,7 @@
+Version 0.2.3 (2020-01-08)
+
+- feat: rewrite of `vecpath2vecl1dir_onefunc::vecpath2vecl1dir` from one single function to a set of smaller classes and functions
+
 
 Version 0.2.2 (2020-01-08)
 

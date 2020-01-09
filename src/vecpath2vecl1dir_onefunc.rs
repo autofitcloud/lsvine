@@ -2,6 +2,10 @@
 use std::cmp;
 use std::{fs, io};
 
+// for tempfiles
+use std::fs::{File, create_dir};
+
+
 // local imports
 pub use crate::level1dir;
 use level1dir::Level1Dir;
@@ -137,5 +141,29 @@ pub fn vecpath2vecl1dir(level1_paths: Vec<std::path::PathBuf>) -> Result<Vec<Lev
     }
 
     Result::Ok(level1_dirs)
+}
+
+
+// utility function for tests
+pub fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Result<Vec<std::path::PathBuf>, io::Error> {
+    // a dir with 2 files
+
+    let file_path_1 = dir_1.path().join("my-temporary-note.txt");
+    File::create(&file_path_1)?;
+    let file_path_2 = dir_1.path().join("another-note.txt");
+    File::create(&file_path_2)?;
+    let dir_path_2 = dir_1.path().join("subdir");
+    create_dir(&dir_path_2)?;
+    let file_path_3 = dir_path_2.join("some-pic.txt");
+    File::create(&file_path_3)?;
+
+    let mut input = Vec::new();
+    input.push(file_path_1);
+    input.push(file_path_2);
+    input.push(dir_path_2);
+    // no need to insert this, the function will traverse again and find it
+    // input.push(file_path_3.to_path_buf());
+
+    Ok(input)
 }
 

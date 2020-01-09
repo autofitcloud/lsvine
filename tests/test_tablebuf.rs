@@ -10,14 +10,12 @@ use std::io;
 pub mod tablebuf;
 #[path = "../src/level1dir.rs"]
 pub mod level1dir;
-#[path = "../src/vecpath2vecl1dir.rs"]
-pub mod vecpath2vecl1dir;
+#[path = "../src/vecpath2vecl1dir_onefunc.rs"]
+pub mod vecpath2vecl1dir_onefunc;
+pub use vecpath2vecl1dir_onefunc::_create_vecpath_twofiles_onedironefile;
 
 pub use tablebuf::TableBuf;
 pub use level1dir::Level1Dir;
-
-pub mod test_vecpath2vecl1dir;
-pub use test_vecpath2vecl1dir::_create_vecpath_twofiles_onedironefile;
 
 
 #[test]

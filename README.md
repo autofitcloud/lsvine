@@ -12,7 +12,7 @@ This format compacts the information vertically and displays it in a [trello](ht
 Downloadable binary for 64-bit linux
 
 ```
-LSVINE_VERSION=0.2.2
+LSVINE_VERSION=0.2.3
 wget https://github.com/autofitcloud/lsvine/releases/download/$LSVINE_VERSION/lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 tar -xzf lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 mv lsvine ~/.local/bin/
