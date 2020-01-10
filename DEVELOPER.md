@@ -89,6 +89,8 @@ bash build.sh
 
 Upload `dist/lsvine*` to github.com/autofitcloud/lsvine after creating a new release.
 
+Release to crates.io with `cargo publish`
+
 
 ### TODO
 
