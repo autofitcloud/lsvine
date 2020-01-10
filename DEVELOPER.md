@@ -68,10 +68,10 @@ cargo clippy
 
 Update versions in
 
-- Cargo.toml
-- build.sh
-- README.md
 - CHANGELOG
+- Cargo.toml
+- README.md
+- build.sh
 
 Re-run `cargo build` to update Cargo.lock
 

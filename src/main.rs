@@ -25,10 +25,15 @@ use vecpath2vecl1dir_iterators::RDAdapter2;
 
 /// Display contents of directory in vine-like output.
 #[derive(StructOpt)]
+#[structopt(name = "lsvine", about = "`tree -L 2` with less empty screen space")]
 struct Cli {
     /// The path to the file to read
     #[structopt(parse(from_os_str), default_value = ".")]
     path_buf: std::path::PathBuf,
+
+    /// do not ignore entries starting with .
+    #[structopt(short, long)]
+    all: bool
 }
 
 
@@ -53,7 +58,7 @@ fn main() -> io::Result<()> {
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
     // The first entry is for files in root, the second is the first child directory, etc.
-    let rda2_iter = RDAdapter2::new(args.path_buf.as_path());
+    let rda2_iter = RDAdapter2::new(args.path_buf.as_path(), args.all);
     //let level1_dirs = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
     let level1_dirs = rda2_iter.collect::<Vec<Level1Dir>>();
 

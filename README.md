@@ -25,7 +25,7 @@ cargo install lsvine
 Downloadable binary for 64-bit linux
 
 ```
-LSVINE_VERSION=0.2.4
+LSVINE_VERSION=0.2.5
 wget https://github.com/autofitcloud/lsvine/releases/download/$LSVINE_VERSION/lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 tar -xzf lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 mv lsvine ~/.local/bin/
