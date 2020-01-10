@@ -129,11 +129,11 @@ impl Iterator for RDAdapter1 {
     if res1.is_none() { return None; }
 
     let res2 = res1.unwrap();
-    if res2.is_err() { return None; }
+    if res2.is_err() { return self.next(); }
 
     let p = res2.unwrap().path();
     let fn_opt = p.file_name().and_then(|x| x.to_str() );
-    if fn_opt.is_none() { return None; }
+    if fn_opt.is_none() { return self.next(); }
 
     // map to PathBufWrap containing filenames
     // re-calculates fn_opt
@@ -143,12 +143,12 @@ impl Iterator for RDAdapter1 {
     pbw.fn_len = pbw.file_name.chars().count();
 
     // skip paths filenames that start with .
-    if pbw.file_name.starts_with('.') { return None; }
+    if pbw.file_name.starts_with('.') { return self.next(); }
 
     // skip paths that don't exist on-disk
     if !pbw.path_buf.is_file() && !pbw.path_buf.is_dir() {
       println!("Path doesnt exist: {}. Skipping", pbw.file_name);
-      return None;
+      return self.next();
     }
 
     Some(pbw)

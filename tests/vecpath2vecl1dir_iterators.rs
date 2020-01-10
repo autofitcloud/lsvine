@@ -25,6 +25,8 @@ pub fn _create_vecpath_twofiles_onedironefile(dir_1: &tempfile::TempDir) -> Resu
 
     let file_path_1 = dir_1.path().join("my-temporary-note.txt");
     File::create(&file_path_1)?;
+    let file_path_2 = dir_1.path().join(".hidden.txt");
+    File::create(&file_path_2)?;
     let file_path_2 = dir_1.path().join("another-note.txt");
     File::create(&file_path_2)?;
     let dir_path_2 = dir_1.path().join("subdir");
@@ -98,8 +100,8 @@ fn rdadapter1_recur() -> io::Result<()> {
     _create_vecpath_twofiles_onedironefile(&dir_1)?;
     let fs_readdir = std::fs::read_dir(dir_1.path())?;
 
-    // Get iterator
-    // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
+    // Get iterator then split file versus dir
+    // Cannot consume more than ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
     let rda1_iter = RDAdapter1::new(fs_readdir);
     let mut rda1_file: Vec<PathBufWrap> = Vec::new();
@@ -113,26 +115,12 @@ fn rdadapter1_recur() -> io::Result<()> {
       rda1_dir.push(x);
     }
 
-    // instead of implementing Clone for RDAdapter1, collect and convert back to iterator on demand
-    // let rda1_coll = rda1_iter.collect::<Vec<_>>();
-    // let rda1_file = rda1_coll.to_iter().filter(|x| x.path_buf.is_file());
-    // let rda1_dir = rda1_iter.to_iter().filter(|x| x.path_buf.is_dir());
-
-    // quietly skip None values, like pandas skipna
-    // Got error: method not found in `&PathBufWrap`
-    // let rda12 = rda11.filter(|&x| x.is_some()).map(|x| x.unwrap());
-
     // assert_eq!(rda1_iter.count(), 3);
     assert_eq!(rda1_file.len() + rda1_dir.len(), 3);
-
-    // filter out the dirs
     assert_eq!(rda1_file.len(), 2);
-
     assert_eq!(rda1_dir.len(), 1);
 
-    // sort because read_dir doesn't guarantee sorted order
-    //rda12.sort_by_key(|pbw| pbw.path_buf);
-
+    // Iterate over each dir and use RDAdapter1 again
     // No need to filter for non-nulls (not sure why)
     for l1dir in &rda1_dir {
       // read_dir again, but this time we care about errors
