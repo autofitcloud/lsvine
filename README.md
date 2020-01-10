@@ -12,7 +12,8 @@ It could be implemented as a separate option, eg `exa --vine` or `lsd --vine`. E
 - [exa](https://github.com/ogham/exa)
     - (pro) It already has a [long grid view](https://the.exa.website/features/long-view#long-grid)
     - (con) Author seems too busy to dequeue issues and PRs
-    - (con) ~~~README doesn't list download binary from releases and run~~~ website https://the.exa.website/ lists download binary
+    - ~~(con) README doesn't list download binary from releases and run~~
+        - website https://the.exa.website/ lists download binary
 - [lsd](https://github.com/Peltoche/lsd)
     - (pro) Distributed via snap in addition to other channels that exa uses
     - (con) Requires some fonts as pre-requisite
