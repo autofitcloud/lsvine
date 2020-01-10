@@ -66,6 +66,15 @@ Lint with [clippy](https://github.com/rust-lang/rust-clippy)
 cargo clippy
 ```
 
+Update versions in
+
+- Cargo.toml
+- build.sh
+- README.md
+- CHANGELOG
+
+Commit version bump
+
 Build release
 
 ```
