@@ -9,6 +9,10 @@ I built `lsvine` to be like [tree](https://en.wikipedia.org/wiki/Tree_(command))
 
 This format compacts the information vertically and displays it in a [trello](https://trello.com/)-like format, one "card" per directory.
 
+Screenshots
+
+![](screenshots/sideBySide.png?raw=true)
+
 
 ## Installation
 
@@ -47,60 +51,6 @@ lsvine 0.2.2
 | build.sh      |                                                |             |         |                           |         |
 | mk_testdir.sh |                                                |             |         |                           |         |
 +---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
-```
-
-
-## Comparison with `ls` and `tree`
-
-- `ls` is available by default on all linux distributions.
-- `tree` can be installed with `apt-get install tree`
-
-Screenshots
-
-![](screenshots/sideBySide.png?raw=true)
-
-Textshots
-
-```
-# ls testdir/test1/
-d1  d2  d3  f1  f2  f3
-
-# tree testdir/test1/
-testdir/
-├── d1
-│   ├── f4
-│   ├── f5
-│   └── f6
-├── d2
-│   ├── f7
-│   ├── f8
-│   └── f9
-├── d3
-│   ├── d4
-│   │   └── f15
-│   ├── f10
-│   ├── f11
-│   ├── f12
-│   ├── f13
-│   └── f14
-├── f1
-├── f2
-└── f3
-
-4 directories, 15 files
-
-
-# lsvine testdir/test1/
-+----+----+----+-----+
-| .  | d1 | d2 | d3  |
-+----+----+----+-----+
-| f1 | f4 | f7 | d4  |
-| f2 | f5 | f8 | f10 |
-| f3 | f6 | f9 | f11 |
-|    |    |    | f12 |
-|    |    |    | f13 |
-|    |    |    | f14 |
-+----+----+----+-----+
 ```
 
 
