@@ -120,8 +120,8 @@ impl TableBuf {
       }
   }
 
-  pub fn should_flush(&self) -> bool {
-    self.maxlen_cum >= self.terminal_width
+  pub fn should_flush(&self, l1dir: &level1dir::Level1Dir) -> bool {
+    self.maxlen_cum + l1dir.max_name_len >= self.terminal_width
   }
 
   pub fn display(&mut self) {
