@@ -26,7 +26,6 @@ fn test_tablebuf() -> io::Result<()> {
 
     // on start, no need to flush
     assert_eq!(level1_vine.table.len(), 0);
-    assert_eq!(level1_vine.should_flush(), false);
 
     // display doesn't do anything
     level1_vine.display();
@@ -40,6 +39,11 @@ fn test_tablebuf() -> io::Result<()> {
       contents: _create_vecpath_twofiles_onedironefile(&dir_1)?,
       max_name_len: 20
     };
+
+    // still, no need to flush
+    assert_eq!(level1_vine.should_flush(&l1dir_1), false);
+
+    // push
     level1_vine.push(&l1dir_1);
 
     // should now have 2 columns and 2 rows
@@ -47,9 +51,6 @@ fn test_tablebuf() -> io::Result<()> {
     assert_eq!(level1_vine.table[0].len(), 1);
     assert_eq!(level1_vine.table[1].len(), 1);
     assert_eq!(level1_vine.table[2].len(), 1);
-
-    // still, no need to flush
-    assert_eq!(level1_vine.should_flush(), false);
 
     // display/flush does stuff, but we don't care ATM as long as there are no errors
     level1_vine.display();
@@ -63,10 +64,9 @@ fn test_tablebuf() -> io::Result<()> {
       contents: _create_vecpath_twofiles_onedironefile(&dir_2)?,
       max_name_len: 200
     };
-    level1_vine.push(&l1dir_2);
 
     // max_name_len > terminal_width => should_flush = true
-    assert_eq!(level1_vine.should_flush(), true);
+    assert_eq!(level1_vine.should_flush(&l1dir_2), true);
 
     Ok(())
 }
