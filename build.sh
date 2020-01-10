@@ -8,8 +8,8 @@ set -e
 rm dist/* -rf
 rm target/* -rf
 
-# version
-LSVINE_VERSION=v0.2.3 # also update in Cargo.toml and README.md
+# version (prefixed with "v")
+LSVINE_VERSION=v0.2.4 # check DEVELOPER.md for other places to update
 
 # ubuntu et al
 TARGET=x86_64-unknown-linux-musl
