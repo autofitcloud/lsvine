@@ -1,3 +1,8 @@
+Version 0.2.5 (2020-01-10)
+
+- feat: add option `--all` (or `-a`) for displaying hidden files
+
+
 Version 0.2.{3,4} (2020-01-0{8,9})
 
 - feat: rewrite of `vecpath2vecl1dir_onefunc::vecpath2vecl1dir` from one single function to a set of smaller classes and functions

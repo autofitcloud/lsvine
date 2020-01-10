@@ -99,12 +99,13 @@ pub fn transform_readdir(fs_readdir: std::fs::ReadDir) -> impl Iterator<Item = P
 /// A re-implementation of transform_readdir but as an iterator adapter
 /// for the sake of inheritance later
 pub struct RDAdapter1 {
-  fs_readdir: std::fs::ReadDir
+  fs_readdir: std::fs::ReadDir,
+  display_all: bool
 }
 
 impl RDAdapter1 {
-  pub fn new(fs_readdir: std::fs::ReadDir) -> RDAdapter1 {
-    RDAdapter1 { fs_readdir }
+  pub fn new(fs_readdir: std::fs::ReadDir, display_all: bool) -> RDAdapter1 {
+    RDAdapter1 { fs_readdir, display_all }
   }
 }
 
@@ -141,7 +142,7 @@ impl Iterator for RDAdapter1 {
     pbw.fn_len = pbw.file_name.chars().count();
 
     // skip paths filenames that start with .
-    if pbw.file_name.starts_with('.') { return self.next(); }
+    if ! self.display_all && pbw.file_name.starts_with('.') { return self.next(); }
 
     // skip paths that don't exist on-disk
     if !pbw.path_buf.is_file() && !pbw.path_buf.is_dir() {
@@ -163,11 +164,12 @@ pub struct RDAdapter2 {
   started: bool,
   counter: usize,
   root_pbw: PathBufWrap,
-  rda1_dir: Vec<PathBufWrap>
+  rda1_dir: Vec<PathBufWrap>,
+  display_all: bool,
 }
 
 impl RDAdapter2 {
-  pub fn new(root_path: &std::path::Path) -> RDAdapter2 {
+  pub fn new(root_path: &std::path::Path, display_all: bool) -> RDAdapter2 {
 
     let root_pbw = PathBufWrap::new(root_path.to_path_buf());
 
@@ -175,7 +177,8 @@ impl RDAdapter2 {
       started: false,
       counter: 0,
       root_pbw,
-      rda1_dir: Vec::new()
+      rda1_dir: Vec::new(),
+      display_all
     }
   }
 }
@@ -204,7 +207,7 @@ impl Iterator for RDAdapter2 {
     }
 
     // get lower-level iterator
-    let rda1_iter = RDAdapter1::new(fs_readdir_2.unwrap());
+    let rda1_iter = RDAdapter1::new(fs_readdir_2.unwrap(), self.display_all);
 
     // if started and already performing directories
     if self.started {

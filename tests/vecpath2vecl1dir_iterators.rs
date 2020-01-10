@@ -142,7 +142,7 @@ fn rdadapter1_direct() -> io::Result<()> {
     // Get iterator
     // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
-    let rda1_iter = RDAdapter1::new(fs_readdir);
+    let rda1_iter = RDAdapter1::new(fs_readdir, false);
 
     assert_eq!(rda1_iter.count(), 3);
 
@@ -162,7 +162,7 @@ fn rdadapter1_recur() -> io::Result<()> {
     // Get iterator then split file versus dir
     // Cannot consume more than ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
-    let rda1_iter = RDAdapter1::new(fs_readdir);
+    let rda1_iter = RDAdapter1::new(fs_readdir, false);
     let mut rda1_file: Vec<PathBufWrap> = Vec::new();
     let mut rda1_dir : Vec<PathBufWrap> = Vec::new();
     for x in rda1_iter {
@@ -186,7 +186,7 @@ fn rdadapter1_recur() -> io::Result<()> {
       match std::fs::read_dir(&l1dir.path_buf) {
         Ok(fs_readdir_2) => {
           // get iterator
-          let rda2_all = RDAdapter1::new(fs_readdir_2);
+          let rda2_all = RDAdapter1::new(fs_readdir_2, false);
           assert_eq!(rda2_all.count(), 1);
         },
         Err(_e) => {
@@ -202,7 +202,7 @@ fn rdadapter1_recur() -> io::Result<()> {
 
 
 #[test]
-fn rdadapter2() -> io::Result<()> {
+fn rdadapter2_hidedot() -> io::Result<()> {
     // Note about "?" below: failures to create tempdir/files are beyond the scope of this package, so it's ok
     let dir_1 = tempfile::tempdir()?;
     create_dirstructure(&dir_1.path(), &dirstruct_f2_d1(), None, None)?;
@@ -210,7 +210,7 @@ fn rdadapter2() -> io::Result<()> {
     // Get iterator
     // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
-    let rda2_iter = RDAdapter2::new(dir_1.path());
+    let rda2_iter = RDAdapter2::new(dir_1.path(), false);
     //let rda2_coll = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
     let rda2_coll = rda2_iter.collect::<Vec<Level1Dir>>();
 
@@ -218,6 +218,28 @@ fn rdadapter2() -> io::Result<()> {
     assert_eq!(rda2_coll.len(), 2);
     assert_eq!(rda2_coll[0].contents.len(), 2);
     assert_eq!(rda2_coll[1].contents.len(), 1);
+
+    Ok(())
+}
+
+
+#[test]
+fn rdadapter2_showdot() -> io::Result<()> {
+    // Note about "?" below: failures to create tempdir/files are beyond the scope of this package, so it's ok
+    let dir_1 = tempfile::tempdir()?;
+    create_dirstructure(&dir_1.path(), &dirstruct_f2_d1(), None, None)?;
+
+    // Get iterator
+    // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
+    // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
+    let rda2_iter = RDAdapter2::new(dir_1.path(), true); // <<<< display_all = true
+    //let rda2_coll = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
+    let rda2_coll = rda2_iter.collect::<Vec<Level1Dir>>();
+
+    // 2 files + 1 dir
+    assert_eq!(rda2_coll.len(), 2);
+    assert_eq!(rda2_coll[0].contents.len(), 3);
+    assert_eq!(rda2_coll[1].contents.len(), 2); // this time the dot file is shown
 
     Ok(())
 }
