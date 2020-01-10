@@ -86,12 +86,8 @@ Build release
 ```
 bash build.sh
 ```
-and upload `dist/lsvine*` to github.com/autofitcloud/lsvine after creating a new release
 
-PS:
-
-- Remember to update the version in build.sh
-- Name the version in github release as 0.2.2 (not v0.2.2)
+Upload `dist/lsvine*` to github.com/autofitcloud/lsvine after creating a new release.
 
 
 ### TODO
