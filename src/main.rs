@@ -94,7 +94,7 @@ fn main() -> io::Result<()> {
       //println!("i {}, n_l1dirs {}, idx_table {}, level1_dirs.len {}", i, n_l1dirs, idx_table, level1_dirs.len());
 
       // if need to flush current level1_vine
-      if level1_vine.should_flush() {
+      if level1_vine.should_flush(&l1dir) {
         level1_vine.display();
         level1_vine.flush();
       }
