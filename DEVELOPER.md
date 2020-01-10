@@ -73,7 +73,13 @@ Update versions in
 - README.md
 - CHANGELOG
 
-Commit version bump
+Re-run `cargo build` to update Cargo.lock
+
+Commit version bump and push
+
+Re-run `cargo test` out of anxiety
+
+git tag and push
 
 Build release
 
