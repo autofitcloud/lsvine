@@ -1,10 +1,15 @@
 # lsvine
 
-List contents of directories in a vine-like format.
+Short: Like `tree -L 2` but with less empty screen space.
+
+Medium:
 
 I built `lsvine` to be like [tree](https://en.wikipedia.org/wiki/Tree_(command)) but with the first-level directories distributed horizontally (and dangling downwards, hence like a vine).
 
-This format compacts the information vertically and displays it in a [trello](https://trello.com/)-like format.
+This format compacts the information vertically and displays it in a [trello](https://trello.com/)-like format, one "card" per directory.
+
+
+Long:
 
 
 ## Installation
