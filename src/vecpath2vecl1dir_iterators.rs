@@ -36,7 +36,7 @@ impl PathBufWrap {
      let mut x = PathBufWrap {
        path_buf: p,
        // file_name: p.file_name().and_then(|&x| x.to_str() ),
-       file_name: file_name,
+       file_name,
        fn_len: 0 // cannot directly do this // file_name.len()
      };
      x.fn_len = x.file_name.len();
@@ -74,29 +74,24 @@ pub fn transform_readdir(fs_readdir: std::fs::ReadDir) -> impl Iterator<Item = P
                              ;
 
     // map to PathBufWrap containing filenames
-    let level1_pathbufwrap = level1_paths
+    level1_paths
            // quietly skip None values, like pandas skipna
            .filter(|p| p.file_name().is_some())
            // quietly skip errors
            .filter(|p| p.file_name().and_then(|x| x.to_str() ).is_some())
            // map to filenames (not Option<...>)
            // file_name returns Option: https://doc.rust-lang.org/std/option/index.html
-           .map(|p| {
-             PathBufWrap::new(p)
-           })
+           .map(PathBufWrap::new)
            // skip paths filenames that start with .
-           .filter(|pbw| return !pbw.file_name.starts_with('.'))
+           .filter(|pbw| !pbw.file_name.starts_with('.'))
            // skip paths that don't exist on-disk
            .filter(|pbw| {
                if !pbw.path_buf.is_file() && !pbw.path_buf.is_dir() {
                  println!("Path doesnt exist: {}. Skipping", pbw.file_name);
                  return false;
                }
-               return true;
+               true
            })
-           ;
-
-    level1_pathbufwrap
 }
 
 // ------------------------------------
@@ -126,7 +121,10 @@ impl Iterator for RDAdapter1 {
     // https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partition
     // Check the docs even/odd example
     let res1 = self.fs_readdir.next();
-    if res1.is_none() { return None; }
+
+    // clippy recommends alternative syntax
+    // if res1.is_none() { return None; }
+    res1.as_ref()?;
 
     let res2 = res1.unwrap();
     if res2.is_err() { return self.next(); }
@@ -186,15 +184,13 @@ impl Iterator for RDAdapter2 {
   type Item = Level1Dir; // Vec<PathBufWrap>;
 
   fn next(&mut self) -> Option<Self::Item> {
-    if self.started {
-      if self.counter >= self.rda1_dir.len() {
+    if self.started && (self.counter >= self.rda1_dir.len()) {
         return None;
-      }
     }
 
     let l1dir = if !self.started { &self.root_pbw } else { &self.rda1_dir[self.counter] };
     let mut max_name_len = l1dir.fn_len;
-    let l1_dirname = if !self.started { String::from(".") } else { String::from(l1dir.file_name.clone()) };
+    let l1_dirname = if !self.started { String::from(".") } else { l1dir.file_name.clone() };
 
     if self.started {
       self.counter+=1;
@@ -268,7 +264,7 @@ impl Iterator for RDAdapter2 {
     };
 
     // only return files, no directories
-    return Some(rda2_l1dir); // rda1_file
+    Some(rda2_l1dir) // rda1_file
   }
 }
 
