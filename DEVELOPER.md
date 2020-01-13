@@ -63,7 +63,7 @@ cargo test
 Lint with [clippy](https://github.com/rust-lang/rust-clippy)
 
 ```
-cargo clippy
+cargo clippy -p lsvine
 ```
 
 Update versions in

@@ -25,7 +25,7 @@ cargo install lsvine
 Downloadable binary for 64-bit linux
 
 ```
-LSVINE_VERSION=0.2.6
+LSVINE_VERSION=0.3.0
 wget https://github.com/autofitcloud/lsvine/releases/download/$LSVINE_VERSION/lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 tar -xzf lsvine-v$LSVINE_VERSION-x86_64-unknown-linux-musl.tar.gz
 mv lsvine ~/.local/bin/
@@ -33,6 +33,8 @@ mv lsvine ~/.local/bin/
 
 
 ## Usage
+
+Regular usage:
 
 ```
 # lsvine --version
@@ -51,6 +53,39 @@ lsvine 0.2.4
 | build.sh      |                                                |             |         |                           |         |
 | mk_testdir.sh |                                                |             |         |                           |         |
 +---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
+```
+
+Contract filename suffixes to reduce occupied screen-space further:
+
+```
+# lsvine testdir/test1
++----+----+----+-----+
+| .  | d1 | d2 | d3  |
++----+----+----+-----+
+| f1 | f4 | f7 | d4  |
+| f2 | f5 | f8 | f10 |
+| f3 | f6 | f9 | f11 |
+|    |    |    | f12 |
+|    |    |    | f13 |
+|    |    |    | f14 |
++----+----+----+-----+
+
+# lsvine testdir/test1 --contract_suffix
++--------+--------+--------+---------+
+| .      | d1     | d2     | d3      |
++--------+--------+--------+---------+
+| f* (3) | f* (3) | f* (3) | d4      |
+|        |        |        | f1* (5) |
++--------+--------+--------+---------+
+
+# lsvine testdir/test1 --contract_suffix --minimum_prefix_length=2
++----+----+----+---------+
+| .  | d1 | d2 | d3      |
++----+----+----+---------+
+| f1 | f4 | f7 | d4      |
+| f2 | f5 | f8 | f1* (5) |
+| f3 | f6 | f9 |         |
++----+----+----+---------+
 ```
 
 

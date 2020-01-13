@@ -14,6 +14,8 @@ pub mod tablebuf;
 pub mod level1dir;
 #[path = "../src/vecpath2vecl1dir_iterators.rs"]
 pub mod vecpath2vecl1dir_iterators;
+#[path = "../src/longest_common_prefix.rs"]
+pub mod longest_common_prefix;
 
 use vecpath2vecl1dir_iterators::{PathBufWrap, RDAdapter1, RDAdapter2};
 use level1dir::Level1Dir;
@@ -55,13 +57,13 @@ pub fn create_dirstructure(rootdir_path: &std::path::Path, dir_struct: &Vec<FoD>
 
     let level_int = level_opt.unwrap_or(0);
 
-    println!("cretae_direstruct {}: enter", level_int);
+    //println!("create_dirstruct {}: enter", level_int);
 
     for (j, dir_content) in dir_struct.iter().enumerate() {
       // https://doc.rust-lang.org/rust-by-example/flow_control/if_let.html
       let mut prefix = "";
       if let FoD::H(_n_files) = dir_content { prefix = "."; }
-      println!("level {}, dirconten {}, prefix {}", level_int, dir_content, prefix);
+      //println!("level {}, dirconten {}, prefix {}", level_int, dir_content, prefix);
 
       match dir_content {
         FoD::F(n_files) | FoD::H(n_files) => {
@@ -82,7 +84,7 @@ pub fn create_dirstructure(rootdir_path: &std::path::Path, dir_struct: &Vec<FoD>
       }
     }
 
-    println!("cretae_direstruct {}: leave", level_int);
+    // println!("create_dirstruct {}: leave", level_int);
 
     Ok(input_vec)
 }
@@ -210,7 +212,7 @@ fn rdadapter2_hidedot() -> io::Result<()> {
     // Get iterator
     // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
-    let rda2_iter = RDAdapter2::new(dir_1.path(), false);
+    let rda2_iter = RDAdapter2::new(dir_1.path(), false, false, 1);
     //let rda2_coll = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
     let rda2_coll = rda2_iter.collect::<Vec<Level1Dir>>();
 
@@ -232,7 +234,7 @@ fn rdadapter2_showdot() -> io::Result<()> {
     // Get iterator
     // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
     // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
-    let rda2_iter = RDAdapter2::new(dir_1.path(), true); // <<<< display_all = true
+    let rda2_iter = RDAdapter2::new(dir_1.path(), true, false, 1); // <<<< display_all = true, contract_filenames = false
     //let rda2_coll = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
     let rda2_coll = rda2_iter.collect::<Vec<Level1Dir>>();
 
@@ -240,6 +242,28 @@ fn rdadapter2_showdot() -> io::Result<()> {
     assert_eq!(rda2_coll.len(), 2);
     assert_eq!(rda2_coll[0].contents.len(), 3);
     assert_eq!(rda2_coll[1].contents.len(), 2); // this time the dot file is shown
+
+    Ok(())
+}
+
+
+#[test]
+fn rdadapter2_contractfilenames() -> io::Result<()> {
+    // Note about "?" below: failures to create tempdir/files are beyond the scope of this package, so it's ok
+    let dir_1 = tempfile::tempdir()?;
+    create_dirstructure(&dir_1.path(), &dirstruct_f2_d1(), None, None)?;
+
+    // Get iterator
+    // Need to consume it ONCE otherwise will get error[E0382]: use of moved value: `rda1_all`
+    // let rda1_all: RDAdapter1 = RDAdapter1::new(fs_readdir).collect();
+    let rda2_iter = RDAdapter2::new(dir_1.path(), false, true, 1); // <<<< display_all = false, contract_filenames = true
+    //let rda2_coll = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
+    let rda2_coll = rda2_iter.collect::<Vec<Level1Dir>>();
+
+    // 2 files + 1 dir
+    assert_eq!(rda2_coll.len(), 2);
+    assert_eq!(rda2_coll[0].contents.len(), 1); // f_0_0_0.txt and f_0_0_1.txt gather under f_0_0_*
+    assert_eq!(rda2_coll[1].contents.len(), 1); // no filename contraction happens here
 
     Ok(())
 }
