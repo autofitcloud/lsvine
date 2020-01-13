@@ -77,7 +77,7 @@ fn main() -> io::Result<()> {
     }
 
     // get terminal width .. surely there is a better way
-    let mut _terminal_width = 100; // default
+    let mut _terminal_width = 200; // default
     match terminal_size() {
       Ok(size) => {
         _terminal_width = size.0 as usize;

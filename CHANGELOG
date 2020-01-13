@@ -1,3 +1,9 @@
+Version 0.2.6 (2020-01-13)
+
+- bugfix: piping to "head" caused a panic. Fixed.
+- enh: change default terminal width if undetected (eg when piped) from 100 to 200
+
+
 Version 0.2.5 (2020-01-10)
 
 - feat: add option `--all` (or `-a`) for displaying hidden files

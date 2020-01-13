@@ -1,6 +1,6 @@
 [package]
 name = "lsvine"
-version = "0.2.5"
+version = "0.2.6"
 authors = ["Shadi Akiki <shadi@autofitcloud.com>"]
 edition = "2018"
 description = "List contents of directories in a vine-like format."

@@ -131,7 +131,13 @@ impl TableBuf {
       self.table.set_titles(Row::new(self.row_titles.iter().map(|res| Cell::new(res)).collect()));
 
       // print table
-      self.table.printstd();
+      // Update 2020-01-13
+      //     prettytable::Table::printstd panics when piped into "head"
+      //     Replace with prettytable::Table::print
+      //     https://github.com/phsym/prettytable-rs/issues/103
+      // self.table.printstd();
+      let mut out = std::io::stdout();
+      let _ = self.table.print(&mut out);  // ignoring the Result<T, E> here
   }
   
   pub fn flush(&mut self) {
