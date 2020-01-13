@@ -9,7 +9,7 @@ rm dist/* -rf
 rm target/* -rf
 
 # version (prefixed with "v")
-LSVINE_VERSION=v0.2.6 # check DEVELOPER.md for other places to update
+LSVINE_VERSION=v0.3.0 # check DEVELOPER.md for other places to update
 
 # ubuntu et al
 TARGET=x86_64-unknown-linux-musl

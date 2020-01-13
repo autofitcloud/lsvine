@@ -21,6 +21,8 @@ pub mod vecpath2vecl1dir_iterators;
 //use vecpath2vecl1dir_iterators::{PathBufWrap, RDAdapter2};
 use vecpath2vecl1dir_iterators::RDAdapter2;
 
+pub mod longest_common_prefix;
+
 // ---------------------------------
 
 /// Display contents of directory in vine-like output.
@@ -33,7 +35,16 @@ struct Cli {
 
     /// do not ignore entries starting with .
     #[structopt(short, long)]
-    all: bool
+    all: bool,
+
+    /// contract filenames to the longest common prefix
+    #[structopt(short, long)]
+    contract_suffix: bool,
+
+    /// if --contract_suffix, set the minimum filename length to maintain after the contraction
+    #[structopt(short, long, default_value = "1")]
+    minimum_prefix_length: usize
+
 }
 
 
@@ -58,7 +69,7 @@ fn main() -> io::Result<()> {
     // Collect the data structure
     // Each entry corresponds to a folder in the current directory (here-on called "root").
     // The first entry is for files in root, the second is the first child directory, etc.
-    let rda2_iter = RDAdapter2::new(args.path_buf.as_path(), args.all);
+    let rda2_iter = RDAdapter2::new(args.path_buf.as_path(), args.all, args.contract_suffix, args.minimum_prefix_length);
     //let level1_dirs = rda2_iter.collect::<Vec<Vec<PathBufWrap>>>();
     let level1_dirs = rda2_iter.collect::<Vec<Level1Dir>>();
 

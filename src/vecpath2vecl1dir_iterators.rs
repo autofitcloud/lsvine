@@ -1,5 +1,4 @@
 /// THIS IS A RE-WRITE OF vecpath2vecl1dir.rs such that it's classes and inheritance and iterators
-/// DOesn't WORK ATM WITH WEIRD ERRORS
 
 // https://doc.rust-lang.org/std/cmp/fn.min.html
 use std::cmp;
@@ -9,6 +8,8 @@ use std::path::PathBuf;
 // local imports
 pub use crate::level1dir;
 use level1dir::Level1Dir;
+pub use crate::longest_common_prefix;
+use longest_common_prefix::Implier;
 
 // -----------------------------------
 /// Utility struct to hold PathBuf and its filename as str
@@ -41,6 +42,12 @@ impl PathBufWrap {
      };
      x.fn_len = x.file_name.len();
      x
+  }
+}
+
+impl std::string::ToString for PathBufWrap {
+  fn to_string(&self) -> String {
+    self.file_name.clone()
   }
 }
 
@@ -166,10 +173,12 @@ pub struct RDAdapter2 {
   root_pbw: PathBufWrap,
   rda1_dir: Vec<PathBufWrap>,
   display_all: bool,
+  contract_suffix: bool,
+  minimum_prefix_length: usize
 }
 
 impl RDAdapter2 {
-  pub fn new(root_path: &std::path::Path, display_all: bool) -> RDAdapter2 {
+  pub fn new(root_path: &std::path::Path, display_all: bool, contract_suffix: bool, minimum_prefix_length: usize) -> RDAdapter2 {
 
     let root_pbw = PathBufWrap::new(root_path.to_path_buf());
 
@@ -178,9 +187,75 @@ impl RDAdapter2 {
       counter: 0,
       root_pbw,
       rda1_dir: Vec::new(),
-      display_all
+      display_all,
+      contract_suffix,
+      minimum_prefix_length
     }
   }
+
+
+  fn handle_vec(&mut self, rda2_all_vec: Vec<PathBufWrap>, mut max_name_len: usize, l1_dirname: String) -> Option<Level1Dir> {
+      // calculate max_name_len
+      for l in rda2_all_vec.iter().map(|pbw| pbw.fn_len) {
+        max_name_len = cmp::max(max_name_len, l);
+      }
+
+      // build Level1Dir.contents vector
+      let mut rda1_contents: Vec<PathBuf> = Vec::new();
+
+      // if no filename contracting is happening
+      if ! self.contract_suffix {
+        for pbw in rda2_all_vec {
+          rda1_contents.push(pbw.path_buf);
+        }
+      } else {
+        // contract the Level1Dir.contents vector if possible
+        let mut implier = Implier::new();
+        implier.contract(rda2_all_vec, self.minimum_prefix_length);
+        let rda1_contracted = implier.level_1;
+        //println!("rda1_contracted: len = {}", rda1_contracted.len());
+        /*
+        for l1 in &rda1_contracted {
+          println!("rda1_contracted/l1: len = {}", l1.l2_string.len());
+          for l2 in &l1.l2_string {
+            println!("  {} / {}", l1.prefix, l2);
+          }
+        }*/
+
+        // operate on rda1_contracted
+        for sg in rda1_contracted {
+          if sg.l2_obj.is_empty() {
+            // shouldn't happen, but just in case
+            continue;
+          }
+
+          if sg.l2_obj.len() == 1 {
+            let pbw = sg.l2_obj.last().unwrap();
+            rda1_contents.push(pbw.path_buf.clone()); // safe to unwrap here
+            continue;
+          }
+
+          // create a fake PathBuf from the prefix
+          // Note that this will have is_file=false and is_dir=false
+          let p2 = format!("{}* ({})", sg.prefix, sg.l2_obj.len());
+          rda1_contents.push(PathBuf::from(p2));
+        }
+      }
+
+      // debug
+      //println!("rda1_contents: {:?}", rda1_contents);
+
+      // build Level1Dir object
+      let rda2_l1dir = Level1Dir {
+        dirname: l1_dirname,
+        contents: rda1_contents,
+        max_name_len
+      };
+
+      // for all level-1 directories, return both files and directories
+      Some(rda2_l1dir) // rda1_both);
+  }
+
 }
 
 impl Iterator for RDAdapter2 {
@@ -192,7 +267,7 @@ impl Iterator for RDAdapter2 {
     }
 
     let l1dir = if !self.started { &self.root_pbw } else { &self.rda1_dir[self.counter] };
-    let mut max_name_len = l1dir.fn_len;
+    let max_name_len = l1dir.fn_len;
     let l1_dirname = if !self.started { String::from(".") } else { l1dir.file_name.clone() };
 
     if self.started {
@@ -211,29 +286,13 @@ impl Iterator for RDAdapter2 {
 
     // if started and already performing directories
     if self.started {
+      // collect iter to vec
       let mut rda2_all_vec = rda1_iter.collect::<Vec<PathBufWrap>>();
 
       // sort
       rda2_all_vec.sort_by_key(|pbw| pbw.file_name.clone());
 
-      // calculate max_name_len
-      for l in rda2_all_vec.iter().map(|pbw| pbw.fn_len) {
-        max_name_len = cmp::max(max_name_len, l);
-      }
-
-      // build Level1Dir object
-      let mut rda1_contents: Vec<PathBuf> = Vec::new();
-      for pbw in rda2_all_vec {
-        rda1_contents.push(pbw.path_buf);
-      }
-      let rda2_l1dir = Level1Dir {
-        dirname: l1_dirname,
-        contents: rda1_contents,
-        max_name_len
-      };
-
-      // for all level-1 directories, return both files and directories
-      return Some(rda2_l1dir); // rda1_both);
+      return self.handle_vec(rda2_all_vec, max_name_len, l1_dirname);
     }
 
     // if didn't start yet
@@ -250,24 +309,7 @@ impl Iterator for RDAdapter2 {
     // raise the flag to start on child directories in the next iteration
     self.started = true;
 
-    // calculate max_name_len
-    for l in rda1_file.iter().map(|pbw| pbw.fn_len) {
-      max_name_len = cmp::max(max_name_len, l);
-    }
-
-    // build Level1Dir object
-    let mut rda1_contents: Vec<PathBuf> = Vec::new();
-    for pbw in rda1_file {
-      rda1_contents.push(pbw.path_buf);
-    }
-    let rda2_l1dir = Level1Dir {
-      dirname: l1_dirname,
-      contents: rda1_contents,
-      max_name_len
-    };
-
-    // only return files, no directories
-    Some(rda2_l1dir) // rda1_file
+    self.handle_vec(rda1_file, max_name_len, l1_dirname)
   }
 }
 

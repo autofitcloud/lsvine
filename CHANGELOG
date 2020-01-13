@@ -1,3 +1,8 @@
+Version 0.3.0 (2020-01-13)
+
+- feat: add options `--contract_suffix` and `--minimum_prefix_length` and implement with "longest common prefix"
+
+
 Version 0.2.6 (2020-01-13)
 
 - bugfix: piping to "head" caused a panic. Fixed.

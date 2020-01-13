@@ -106,7 +106,14 @@ impl TableBuf {
         //println!("level1_vine {} {}", self.table.len(), self.table[j].len());
         match l1dir.contents[j].file_name().and_then(|x| x.to_str()) {
             Some(cell_val1) => {
-                let cell_val2 = if !l1dir.contents[j].is_file() { cell_val1.blue().bold() } else { cell_val1.normal() };
+                let cell_val2 = if l1dir.contents[j].is_dir() {
+                  cell_val1.blue().bold()
+                } else if l1dir.contents[j].is_file() {
+                    cell_val1.normal()
+                } else {
+                  // doesn't exist, happens for contracted filenames
+                  cell_val1.green().italic()
+                };
                 self.table[j].add_cell(Cell::new(cell_val2.to_string().as_str()));
             },
             None => {
