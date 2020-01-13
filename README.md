@@ -41,7 +41,7 @@ Regular usage:
 
 ```
 # lsvine --version
-lsvine 0.2.4
+lsvine 0.3.1
 
 # lsvine .
 +---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
@@ -56,6 +56,29 @@ lsvine 0.2.4
 | build.sh      |                                                |             |         |                           |         |
 | mk_testdir.sh |                                                |             |         |                           |         |
 +---------------+------------------------------------------------+-------------+---------+---------------------------+---------+
+```
+
+Show hidden filenames
+
+```
+# lsvine -a
++----------------+----------------+------------------------------------------------+-----------------------+-------------------------------+---------------------------+----------+-------------------------------+
+| .              | .git           | dist                                           | screenshots           | src                           | target                    | testdir  | tests                         |
++----------------+----------------+------------------------------------------------+-----------------------+-------------------------------+---------------------------+----------+-------------------------------+
+| .README.md.swp | COMMIT_EDITMSG | .gitkeep                                       | sideBySide-latest.png | level1dir.rs                  | .gitkeep                  | .gitkeep | test_tablebuf.rs              |
+| .gitignore     | FETCH_HEAD     | lsvine-v0.3.1-x86_64-unknown-linux-musl.tar.gz |                       | longest_common_prefix.rs      | .rustc_info.json          | test1    | vecpath2vecl1dir_iterators.rs |
+| CHANGELOG      | HEAD           |                                                |                       | main.rs                       | package                   | test2    | vecpath2vecl1dir_onefunc.rs   |
+| Cargo.lock     | ORIG_HEAD      |                                                |                       | main_bkp_onefunc.rs           | release                   | test3    |                               |
+| Cargo.toml     | branches       |                                                |                       | tablebuf.rs                   | x86_64-unknown-linux-musl |          |                               |
+| DEVELOPER.md   | config         |                                                |                       | vecpath2vecl1dir_iterators.rs |                           |          |                               |
+| LICENSE        | description    |                                                |                       | vecpath2vecl1dir_onefunc.rs   |                           |          |                               |
+| README.md      | hooks          |                                                |                       |                               |                           |          |                               |
+| build.sh       | index          |                                                |                       |                               |                           |          |                               |
+| mk_testdir.sh  | info           |                                                |                       |                               |                           |          |                               |
+|                | logs           |                                                |                       |                               |                           |          |                               |
+|                | objects        |                                                |                       |                               |                           |          |                               |
+|                | refs           |                                                |                       |                               |                           |          |                               |
++----------------+----------------+------------------------------------------------+-----------------------+-------------------------------+---------------------------+----------+-------------------------------+
 ```
 
 Contract filename suffixes to reduce occupied screen-space further:
