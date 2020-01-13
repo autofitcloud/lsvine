@@ -1,6 +1,16 @@
 Version 0.3.0 (2020-01-13)
 
 - feat: add options `--contract_suffix` and `--minimum_prefix_length` and implement with "longest common prefix"
+  - implementation of longest common prefix from
+    - https://beta.rustgym.com/longest-common-prefix/
+  - other related useful links
+    - https://en.wikipedia.org/wiki/Longest_common_substring_problem
+    - https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Python
+    - https://codereview.stackexchange.com/questions/212568/find-the-longest-common-sequence-of-two-strings-in-rust
+    - https://stackoverflow.com/questions/26927892/reverse-regexp-from-user-entered-string-c#26928986
+    - https://stackoverflow.com/questions/16499142/creating-a-regular-expression-for-a-list-of-strings
+    - https://en.wikipedia.org/wiki/Induction_of_regular_languages
+    - http://stamina.chefbe.net/download
 
 
 Version 0.2.6 (2020-01-13)
