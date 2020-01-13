@@ -12,7 +12,7 @@ This format compacts the information vertically and displays it in a [trello](ht
 Screenshots
 
 <!-- ![](screenshots/sideBySide.png?raw=true) -->
-[Imgur](https://imgur.com/sWcK6hi)
+![Imgur Image](http://i.imgur.com/sWcK6hi.png)
 
 
 ## Installation
