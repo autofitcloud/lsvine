@@ -14,7 +14,7 @@ Screenshots
 <!-- ![](screenshots/sideBySide.png?raw=true) -->
 
 <!-- edit the image on imgur at https://imgur.com/a/CvTgoR7 in my shadi@autofitcloud.com account -->
-![Imgur Image](http://i.imgur.com/sWcK6hi.png)
+![Imgur Image](http://i.imgur.com/5QYqemF.png)
 
 
 ## Installation
