@@ -12,6 +12,8 @@ This format compacts the information vertically and displays it in a [trello](ht
 Screenshots
 
 <!-- ![](screenshots/sideBySide.png?raw=true) -->
+
+<!-- edit the image on imgur at https://imgur.com/a/CvTgoR7 in my shadi@autofitcloud.com account -->
 ![Imgur Image](http://i.imgur.com/sWcK6hi.png)
 
 
