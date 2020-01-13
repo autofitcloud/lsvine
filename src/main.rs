@@ -1,6 +1,8 @@
 /// Usage: cargo run path/to/dir
 
+// https://docs.rs/structopt/0.3.7/structopt/
 use structopt::StructOpt;
+
 use std::process;
 ///use failure::ResultExt;
 ///use exitfailure::ExitFailure;
