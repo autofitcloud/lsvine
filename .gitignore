@@ -2,3 +2,4 @@ testdir/*
 target/*
 .*swp
 dist/*
+screenshots/*
