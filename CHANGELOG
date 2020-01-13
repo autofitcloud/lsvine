@@ -1,6 +1,6 @@
-Version 0.3.0 (2020-01-13)
+Version 0.3.{0,1} (2020-01-13)
 
-- feat: add options `--contract_suffix` and `--minimum_prefix_length` and implement with "longest common prefix"
+- feat: add options `--contract-suffix` and `--minimum-prefix-length` and implement with "longest common prefix"
   - implementation of longest common prefix from
     - https://beta.rustgym.com/longest-common-prefix/
   - other related useful links

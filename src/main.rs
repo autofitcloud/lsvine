@@ -38,11 +38,11 @@ struct Cli {
     all: bool,
 
     /// contract filenames to the longest common prefix
-    #[structopt(short, long)]
+    #[structopt(short, long = "contract-suffix")]
     contract_suffix: bool,
 
     /// if --contract_suffix, set the minimum filename length to maintain after the contraction
-    #[structopt(short, long, default_value = "1")]
+    #[structopt(short, long = "minimum-prefix-length", default_value = "1")]
     minimum_prefix_length: usize
 
 }
