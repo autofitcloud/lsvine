@@ -141,3 +141,12 @@ Apache License 2.0. Check file [LICENSE](LICENSE)
 ## Dev notes
 
 Check [DEVELOPER.md](DEVELOPER.md)
+
+
+## News
+
+To follow our announcements:
+
+- [twitter](https://twitter.com/autofitcloud)
+- [reddit](https://www.reddit.com/r/autofitcloud)
+- [discord](https://discord.gg/56zmfDc)
