@@ -1,6 +1,8 @@
 use std::str::Chars;
 
 /// https://beta.rustgym.com/longest-common-prefix/
+/// TODO Update this from https://github.com/warycat/leetcode_rs/blob/master/src/_14_longest_common_prefix.rs
+/// as the author indicated on discord that the git repo version is better
 fn longest_common_prefix(strs: &[String]) -> String {
         let mut prefix = String::new();
         let mut iters: Vec<Chars> = strs.iter().map(|s| {s.chars()}).collect();
