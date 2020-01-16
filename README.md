@@ -143,9 +143,11 @@ Apache License 2.0. Check file [LICENSE](LICENSE)
 Check [DEVELOPER.md](DEVELOPER.md)
 
 
-## News
+## Author
 
-To follow our announcements:
+Built by ❤ [AutofitCloud](https://www.autofitcloud.com).
+
+To follow announcements 📢:
 
 - [twitter](https://twitter.com/autofitcloud)
 - [reddit](https://www.reddit.com/r/autofitcloud)
