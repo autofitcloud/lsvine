@@ -114,6 +114,8 @@ Contract filename suffixes to reduce occupied screen-space further:
 +----+----+----+---------+
 ```
 
+For example, `lsvine -c -m 3 /etc` output [here](https://gist.github.com/shadiakiki1986/76d7a961d835400ed1d02e2d34c867e2)
+
 
 ## The future
 
