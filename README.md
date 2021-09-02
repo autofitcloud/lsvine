@@ -2,6 +2,8 @@
 
 `tree -L 2` with less empty screen space.
 
+`ls *` with vertical filename listing.
+
 
 ## Motivation
 
@@ -16,6 +18,50 @@ Screenshots
 <!-- edit the image on imgur at https://imgur.com/a/CvTgoR7 in my shadi@autofitcloud.com account -->
 ![Imgur Image](http://i.imgur.com/5QYqemF.png)
 
+
+Comparison to `ls *`
+
+```
+# ls *
+cli.py  corpus.py  corpus_ytq1_v20210524e.py  datasets.py  ffmpeg.py  __init__.py  s3_archive_cli.py  s3_tarfile.py  s3_zipfile.py  spectrogram.py  test_bla.py  test_utils.py  utils.py
+
+io:
+audiofile.py  dir_tgz.py  gallery_html_generator.py  gs_dir_struct_mirror.py  __init__.py
+
+pipeline:
+base_multiple.py  __init__.py  local_multiple.py  local_single.py  remote_gs.py  remote_youtube.py
+
+spectrogram_helpers:
+__init__.py                     s14_drop_periodic_blobs.py   s22a_watershed.py          s23b_whistle_segwrap.py  s42_tracer.py          test_s22a_watershed.py
+s12_drop_bursts.py              s21a_drop_blobs.py           s22b_whistle_connector.py  s3_reporter.py           s43_transliterator.py  test_s43_transliterator.py
+s13_remove_noise__blurflood.py  s21b_strengthen_whistles.py  s23a_whistle_segmenter.py  s41_stats.py             s44_subtitles.py
+```
+
+```
+# lsvine
++---------------------------+---------------------------+-------------------+--------------------------------+
+| .                         | io                        | pipeline          | spectrogram_helpers            |
++---------------------------+---------------------------+-------------------+--------------------------------+
+| __init__.py               | __init__.py               | __init__.py       | __init__.py                    |
+| cli.py                    | audiofile.py              | base_multiple.py  | s12_drop_bursts.py             |
+| corpus.py                 | dir_tgz.py                | local_multiple.py | s13_remove_noise__blurflood.py |
+| corpus_ytq1_v20210524e.py | gallery_html_generator.py | local_single.py   | s14_drop_periodic_blobs.py     |
+| datasets.py               | gs_dir_struct_mirror.py   | remote_gs.py      | s21a_drop_blobs.py             |
+| ffmpeg.py                 |                           | remote_youtube.py | s21b_strengthen_whistles.py    |
+| s3_archive_cli.py         |                           |                   | s22a_watershed.py              |
+| s3_tarfile.py             |                           |                   | s22b_whistle_connector.py      |
+| s3_zipfile.py             |                           |                   | s23a_whistle_segmenter.py      |
+| spectrogram.py            |                           |                   | s23b_whistle_segwrap.py        |
+| test_bla.py               |                           |                   | s3_reporter.py                 |
+| test_utils.py             |                           |                   | s41_stats.py                   |
+| utils.py                  |                           |                   | s42_tracer.py                  |
+|                           |                           |                   | s43_transliterator.py          |
+|                           |                           |                   | s44_subtitles.py               |
+|                           |                           |                   | test_s22a_watershed.py         |
+|                           |                           |                   | test_s43_transliterator.py     |
++---------------------------+---------------------------+-------------------+--------------------------------+
+
+```
 
 ## Installation
 
